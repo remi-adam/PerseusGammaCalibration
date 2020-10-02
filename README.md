@@ -8,6 +8,9 @@ This repository contain the notebooks and scripts used for the Perseus cluster m
 -  Hanisch and Erickson (1980) [https://ui.adsabs.harvard.edu/abs/1980AJ.....85..183H/abstract] \
 Non detection of the Perseus halo
 
+-  Noordam and  de Bruyn (1982) [https://ui.adsabs.harvard.edu/abs/1982Natur.299..597N/abstract] \
+WSRT processing applyied to Perseus
+
 - Pedlar et al. (1990) [https://ui.adsabs.harvard.edu/abs/1990MNRAS.246..477P/abstract, https://www.researchgate.net/publication/234294211_The_Radio_Structure_of_NGC1275] \
 Radio structure around NGC1275
 
@@ -63,24 +66,35 @@ Deep VLA observations of Perseus
 
 ## Gas thermal density
 
-- beta model
+- X-ray properties (Jones & Forman 1999):\
+L_x = 14.948 ergs/s (0.5-4.5 keV) \
+R_c = 0.28 Mpc \
+beta = 0.58 \
+n_0 = 4.050 cm**-3 \
+Mgas = 1.10 10**14 Msun (1 Mpc)\
+Mgas = 1.93 10**14 Msun (5 Rc)\
+Mtot = 3.59 10**14 Msun (1 Mpc)\
+Mtot = 5.31 10**14 Msun (5 Rc)\
+H0 = 50 km/s/ Mpc
 
-
-
-- double beta-model (Churazov 2004, rescaled from Churazov 2003, from Jones & Forman 1999):
-n_e(r) = 4.6e-2 / (1+(r/57)**2)**1.8 + 4.8e-3 / (1+(r/200)**2)**0.87 cm**-3
-Probably disputable for the large scales.
+- double beta-model (Churazov 2004, rescaled from Churazov 2003, from Jones & Forman 1999): \
+n_e(r) = 4.6e-2 / (1+(r/57)**2)**1.8 + 4.8e-3 / (1+(r/200)**2)**0.87 cm**-3 \
+3 beta1 / 2 = 1.8 => beta1 = 1.2, 3 beta2 / 2 = 0.87 => beta2 = 0.58 \
 H0 = 70 km/s/ Mpc
 
+- Ettori et al. (1999): \
+Best-fit beta-model XXX
 
-- Ettori et al. (1999)
-
-
+- Simionescu et al. (2011):\
+Slope of the density profile α = 1.68 ± 0.04 above 0.7 Mpc. This is consistent with previous results from ROSAT (Ettori et al. 1999) data extending out to ∼ 1.4 Mpc.
 
 
 ## Gas temperature
 
-- T_e (r) = 7 * (1+(r/71)**3) / (2.3+(r/71)**3) keV
+- From Churazov et al. (2003), valid in the core: \
+T_e (r) = 7 * (1+(r/71)**3) / (2.3+(r/71)**3) keV
+
+- The projected temperature profile is provided in Simionescu et al. (2011)
 
 
 ## Metalicity
@@ -89,10 +103,10 @@ H0 = 70 km/s/ Mpc
 
 ## Magnetic field
 
-- B = 25 uG at 10 kpc
+- B = 25 uG at 10 kpc ...
 
-- B(r) \propto n_e**0.5 ?
-for Coma
+- B(r) \propto n_e**0.5 for Coma ...
+
 
 ## Cosmic rays
 
