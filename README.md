@@ -4,10 +4,8 @@ This repository contain the notebooks and scripts used for the Perseus cluster m
 
 ## Relevant biliographie
 
-- Ettori et al. (1999) [https://ui.adsabs.harvard.edu/abs/1998MNRAS.300..837E/abstract]
-
-ROSAT PSPC observations of Perseus
-
+- Ettori et al. (1999) [https://ui.adsabs.harvard.edu/abs/1998MNRAS.300..837E/abstract] \
+ROSAT PSPC observations of Perseus \
 H0 = 50 km/s/Mpc
 
 - Jones & Forman (1999) []
