@@ -41,6 +41,9 @@ H0 = 70 km/s/Mpc
 Modeling of the radio mini-halo in a re0-acceleration framework. Profile, 3 point spectrum and spectral index profile are shown \
 H0 = 50 km/s/Mpc
 
+- Sanders et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.349..952S/abstract] \
+Chandra observations in the core, showing temperature and density profile
+
 - Simionescu et al. (2011) [https://ui.adsabs.harvard.edu/abs/2011Sci...331.1576S/abstract] \
 Baryon physics to the edge of Perseus in 2 specific directions \
 H0 = 70 km/s/Mpc
@@ -66,30 +69,41 @@ Deep VLA observations of Perseus
 
 ## Gas thermal density
 
-- X-ray properties (Jones & Forman 1999):\
+- X-ray properties (Jones & Forman 1999): \
 L_x = 14.948 ergs/s (0.5-4.5 keV) \
-R_c = 0.28 Mpc \
+$R_c$ = 0.28 Mpc \
 beta = 0.58 \
-n_0 = 4.050 cm**-3 \
-Mgas = 1.10 10**14 Msun (1 Mpc)\
-Mgas = 1.93 10**14 Msun (5 Rc)\
-Mtot = 3.59 10**14 Msun (1 Mpc)\
-Mtot = 5.31 10**14 Msun (5 Rc)\
+n_0 = 4.050 cm^-3 \
+Mgas = 1.10 10^14 Msun (1 Mpc) \
+Mgas = 1.93 10^14 Msun (5 Rc) \
+Mtot = 3.59 10^14 Msun (1 Mpc) \
+Mtot = 5.31 10^14 Msun (5 Rc)\
 H0 = 50 km/s/ Mpc
 
 - double beta-model (Churazov 2004, rescaled from Churazov 2003, from Jones & Forman 1999): \
-n_e(r) = 4.6e-2 / (1+(r/57)**2)**1.8 + 4.8e-3 / (1+(r/200)**2)**0.87 cm**-3 \
+n_e(r) = 4.6e-2 / (1+(r/57)**2)**1.8 + 4.8e-3 / (1+(r/200)**2)**0.87 cm^-3 \
 3 beta1 / 2 = 1.8 => beta1 = 1.2, 3 beta2 / 2 = 0.87 => beta2 = 0.58 \
 H0 = 70 km/s/ Mpc
 
 - Ettori et al. (1999): \
-Best-fit beta-model XXX
+R200 = 2.7 Mpc, Mtot (2.3 Mpc) = 1.19 ± 0.12 10^15 Msun (80% C.L.) \
+Best-fit beta-model beta = 0.63 ± 0.01, r_c = 9.3 ± 0.2 arcmin  \
+H0 = 50 km/s/Mpc
 
 - Simionescu et al. (2011):\
-Slope of the density profile α = 1.68 ± 0.04 above 0.7 Mpc. This is consistent with previous results from ROSAT (Ettori et al. 1999) data extending out to ∼ 1.4 Mpc.
-
+Slope of the density profile α = 1.68 ± 0.04 above 0.7 Mpc, for the East and Northwest arms. This is consistent with previous results from ROSAT (Ettori et al. 1999) data extending out to ∼ 1.4 Mpc.\
+This implies beta2 = 1.68/3 = 0.56 ± 0.02 \
+However, looking at Ettori et al. (1999), Table 5, it is not consistent with Simionescu et al.: E: beta = 0.88 or powerlaw index = 2.3 ; N: beta = 0.67 or powerlaw index = 1.87 ; W: beta = 0.61 or powerlaw index = 1.87 \
+Correcting for clumping leads to a slope of 2.5, i.e. beta = 0.83, in good agreement, this time, with Ettori et al. (1999), but who did not correct for clumping. \
+R200 = 1.79  ± 0.04 Mpc, M = 6.65+0.43-0.46 × 10^14 Msun \
+The best-fitting NFW function has a concentration parameter c = 5.0 ± 0.5
 
 ## Gas temperature
+
+- From Ettori et al. (1999):\
+The temperature profile is flat in the outskirt (0.3-2 Mpc), reaching 6.3 keV \
+! Pressure in the outermost bin fixed so that the deprojected temperature match 6.3 keV ! \
+H0 = 50 km/s/Mpc
 
 - From Churazov et al. (2003), valid in the core: \
 T_e (r) = 7 * (1+(r/71)**3) / (2.3+(r/71)**3) keV
@@ -99,7 +113,7 @@ T_e (r) = 7 * (1+(r/71)**3) / (2.3+(r/71)**3) keV
 
 ## Metalicity
 
-- Constant metalicity for Perseus: Z  = 0.306 ±  0.012 Werner et al. (2013)
+- Constant metalicity for Perseus: Z  = 0.306 ± 0.012 Werner et al. (2013)
 
 ## Magnetic field
 
