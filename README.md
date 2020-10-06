@@ -82,6 +82,15 @@ Deep VLA observations of Perseus
 - Hitomi Collaboration (2018) [https://ui.adsabs.harvard.edu/abs/2018PASJ...70....9H/abstract] \
 Gas motion in Perseus
 
+- Donnert et al. (2018) [https://ui.adsabs.harvard.edu/abs/2018SSRv..214..122D/abstract] \
+Magnetic field review
+
+- Van Weeren et al. (2018) [https://ui.adsabs.harvard.edu/abs/2019SSRv..215...16V/abstract] \
+Diffuse cluster scale radio emission review
+
+- Bykov et al. (2018) [https://ui.adsabs.harvard.edu/abs/2019SSRv..215...14B/abstract] \
+Shocks and nonthermal particles in clusters, a review
+
 - Johnson et al. (2020) [https://ui.adsabs.harvard.edu/abs/2020ApJ...888..101J/abstract] \
 Determination of magnetic field from RM
 
@@ -164,7 +173,7 @@ This is true down to 400 kpc
 
 - B_0 cannot be determined better than in a range of 3 even under ideal conditions (Johnson et al. 2020)
 
-- 
+- If the magnetic flux is conserved, B = B_star (rho/<rho>)^2/3 (e.g. Donnert et al. 2018 for a review)
 
 ## Cosmic rays
 
