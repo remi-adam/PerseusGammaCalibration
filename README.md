@@ -29,6 +29,9 @@ Einstein telescope obesrvation of nearby clusters and groups \
 See [https://cdsarc.unistra.fr/viz-bin/cat/J/ApJ/511/65] for the full table (Table 4) \
 H0 = 50 km/s/Mpc
 
+- Bonafede et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010A%26A...513A..30B/abstract] \
+Measeurement of the magnetic field of Coma from Faraday rotation measures
+
 - Churazov et al. (2003) [https://ui.adsabs.harvard.edu/abs/2003ApJ...590..225C/abstract] \
 XMM observations of Perseus: Sx and T \
 H0 = 50 km/s/Mpc ?
@@ -169,16 +172,21 @@ This is true down to 400 kpc
 
 ## Magnetic field
 
-- B = 25 uG at 10 kpc, very crude approximation (Taylor et al. 2006)
-
-- Comparing Kelvin-Helmoltz instabilities at the cold front with simulations, Walker et al (2017) infered a ratio of initial magnetic to thermal pressure before sloshing occur: beta = p_th/p_B ~200, implies B ~ (2 * mu_0 * Pth / beta)**0.5. This implies B_core ~ 50 uG, B(1 Mpc) ~ 1 uG
-
-- B(r) \propto n_e^[0.4-0.7] with central magnetic field in [3.9-5.4] uG
-
-- B_0 cannot be determined better than in a range of 3 even under ideal conditions (Johnson et al. 2020)
-
 - If the magnetic flux is conserved, B = B_star (rho/<rho>)^2/3 (e.g. Donnert et al. 2018 for a review)
 
+- B = 25 uG at 10 kpc. This is a very crude approximation (Taylor et al. 2006). \
+From this central value, one can assume a scaling with density B(r) \propto n_e^2/3
+
+- Comparing Kelvin-Helmoltz instabilities at the cold front with simulations, Walker et al (2017) infered an overall ratio of initial magnetic to thermal pressure before sloshing occur (cluster volume average): beta = p_th/p_B ~ 200. This implies B ~ (2 * mu_0 * Pth / beta)**0.5, i.e. B(10 kpc) ~ 50 uG, B(1 Mpc) ~ 1 uG.
+
+- B(r) \propto n_e^[0.4-0.7] with central magnetic field in [3.9-5.4] uG in the case of Coma (Bonafede et al. 2010). \
+For Perseus, ne0 = 0.045 cm-3, for Coma ne0 = 0.0034 cm-3. \
+With eta = 0.5 and 4.7 uG for Coma (best-fit), we have 17.3 uG at the centre of Perseus. \
+With eta = 0.4 and 3.9 uG for Coma (best-fit), we have 11.0 uG at the centre of Perseus. \
+With eta = 0.9 and 5.4 uG for Coma (best-fit), we have 56.2 uG at the centre of Perseus. \
+With eta = 2/3 and 5 uG for Coma (best-fit), we have 28.3 uG at the centre of Perseus. 
+
+- B_0 cannot be determined better than in a range of 3 even under ideal conditions (Johnson et al. 2020)
 
 ## Cosmic rays
 
@@ -189,12 +197,15 @@ In MAGIC paper: "The reported radial spectral steepening of the radio mini-halo 
 
 z = 0.017284 (Hitomi colaboration 2018)
 
-
 ## Mass
 
 M200 = 6.65+0.43-0.46 × 10^14 Msun (Simionescu et al. 2011) \
 r500=54 arcmin for the NW arm (Simionescu et al. 2011) \
 r500=59.7arcmin±0.4 arcmin and r500=59.3arcmin±0.5 arcmin, using Planck and A10 UPP, respectively (Urban et al. 2013) \
-R_200 = 2.7 Mpc, M_tot (2.3 Mpc) = 1.19 ± 0.12 10^15 M_sun (80% C.L.) (Ettori et al. 1999) \
+R_200 = 2.7 Mpc, M_tot (2.3 Mpc) = 1.19 ± 0.12 10^15 M_sun (Ettori et al. 1999) \
 
-
+MCXC general informations: \
+Name = RXC J0319.7+4130  \
+L500 = 6.217359 \
+M500 = 6.1508 \
+R500 = 1.2856
