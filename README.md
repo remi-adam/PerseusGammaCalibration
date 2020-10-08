@@ -79,6 +79,9 @@ MAGIC observations of Perseus
 - Gendron-Marsolais et al. (2017) [http://adsabs.harvard.edu/abs/2017MNRAS.469.3872G]\
 Deep VLA observations of Perseus
 
+- Walker et al. (2017) [https://ui.adsabs.harvard.edu/abs/2017MNRAS.468.2506W/abstract] \
+Giant Kelvin-Helmoltz instability in Perseus
+
 - Hitomi Collaboration (2018) [https://ui.adsabs.harvard.edu/abs/2018PASJ...70....9H/abstract] \
 Gas motion in Perseus
 
@@ -113,8 +116,7 @@ n_e(r) = 4.6e-2 / (1+(r/57)**2)**1.8 + 4.8e-3 / (1+(r/200)**2)**0.87 cm^-3 \
 H0 = 70 km/s/ Mpc
 
 - Ettori et al. (1999): \
-R_200 = 2.7 Mpc, M_tot (2.3 Mpc) = 1.19 ± 0.12 10^15 M_sun (80% C.L.) \
-Best-fit β-model β = 0.63 ± 0.01, r_c = 9.3 ± 0.2 arcmin  \
+Best-fit β-model β = 0.81, r_c = 17.0 arcmin  \
 H0 = 50 km/s/Mpc
 
 - Simionescu et al. (2011):\
@@ -169,11 +171,14 @@ This is true down to 400 kpc
 
 - B = 25 uG at 10 kpc, very crude approximation (Taylor et al. 2006)
 
+- Comparing Kelvin-Helmoltz instabilities at the cold front with simulations, Walker et al (2017) infered a ratio of initial magnetic to thermal pressure before sloshing occur: beta = p_th/p_B ~200, implies B ~ (2 * mu_0 * Pth / beta)**0.5. This implies B_core ~ 50 uG, B(1 Mpc) ~ 1 uG
+
 - B(r) \propto n_e^[0.4-0.7] with central magnetic field in [3.9-5.4] uG
 
 - B_0 cannot be determined better than in a range of 3 even under ideal conditions (Johnson et al. 2020)
 
 - If the magnetic flux is conserved, B = B_star (rho/<rho>)^2/3 (e.g. Donnert et al. 2018 for a review)
+
 
 ## Cosmic rays
 
@@ -183,3 +188,13 @@ In MAGIC paper: "The reported radial spectral steepening of the radio mini-halo 
 ## Redshift
 
 z = 0.017284 (Hitomi colaboration 2018)
+
+
+## Mass
+
+M200 = 6.65+0.43-0.46 × 10^14 Msun (Simionescu et al. 2011) \
+r500=54 arcmin for the NW arm (Simionescu et al. 2011) \
+r500=59.7arcmin±0.4 arcmin and r500=59.3arcmin±0.5 arcmin, using Planck and A10 UPP, respectively (Urban et al. 2013) \
+R_200 = 2.7 Mpc, M_tot (2.3 Mpc) = 1.19 ± 0.12 10^15 M_sun (80% C.L.) (Ettori et al. 1999) \
+
+
