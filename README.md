@@ -61,6 +61,9 @@ H0 = 70 km/s/Mpc
 - Aleksic et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010ApJ...710..634A/abstract] \
 MAGIC observations of Perseus
 
+- Piffaretti et al (2011) [https://ui.adsabs.harvard.edu/abs/2011A%26A...534A.109P/abstract] \
+MCXC catalog
+
 - Aleksic et al. (2012) [https://ui.adsabs.harvard.edu/abs/2012A%26A...541A..99A/abstract] \
 MAGIC observations of Perseus
 
@@ -151,7 +154,7 @@ The temperature profile is flat in the outskirt (0.3-2 Mpc), reaching 6.3 keV \
 H0 = 50 km/s/Mpc
 
 - From Churazov et al. (2003), valid in the core: \
-T_e (r) = 7 * (1+(r/71)**3) / (2.3+(r/71)**3) keV
+T_e (r) = 7 * (1+(r/100)**3) / (2.3+(r/100)**3) keV
 H0 = 50 km/s/Mpc
 
 - The projected temperature profile is provided in Simionescu et al. (2011)
@@ -192,19 +195,19 @@ With eta = 2/3 and 5 uG for Coma (best-fit), we have 28.3 uG at the centre of Pe
 
 In MAGIC paper: "The reported radial spectral steepening of the radio mini-halo emission (Gitti et al. 2002) could be an observational artifact owing to a poor signal-to-noise ratio in the outer core of the cluster and the ambiguity in determining the large scale Fourier components owing to nonuniform coverage of the Fourier plane and missing short-baseline information: the so-called “missing zero spacing”-problem of interferometric radio observations. By comparing the spectral index distribution of the three radio maps (at 92 cm, 49 cm, and 21 cm, Sijbring 1993), radial spectral flattening depending on the chosen radial direction seems possible."
 
-
-## Redshift
+## Redshift and coordinates
 
 z = 0.017284 (Hitomi colaboration 2018)
+R.A. Dec. = 49.950667, 41.511696 (NED)
 
 ## Mass
 
 M200 = 6.65+0.43-0.46 × 10^14 Msun (Simionescu et al. 2011) \
 r500=54 arcmin for the NW arm (Simionescu et al. 2011) \
-r500=59.7arcmin±0.4 arcmin and r500=59.3arcmin±0.5 arcmin, using Planck and A10 UPP, respectively (Urban et al. 2013) \
+r500=59.7arcmin±0.4 arcmin (i.e. M500 = 5.9631869×10^14M⊙ in Planck15 cosmology) and r500=59.3arcmin±0.5 arcmin, using Planck and A10 UPP, respectively (Urban et al. 2013) \
 R_200 = 2.7 Mpc, M_tot (2.3 Mpc) = 1.19 ± 0.12 10^15 M_sun (Ettori et al. 1999) \
 
-MCXC general informations: \
+MCXC (Piffaretti et al. 2011) general informations: \
 Name = RXC J0319.7+4130  \
 L500 = 6.217359 \
 M500 = 6.1508 \
