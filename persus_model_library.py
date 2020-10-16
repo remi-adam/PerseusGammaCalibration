@@ -47,12 +47,8 @@ def default_model():
 
     cluster = set_thermal_model(cluster)
     cluster = set_magnetic_field_model(cluster, case='Taylor2006')
+    cluster = set_pure_hadronic_model(cluster, ('density', 1.0), 1e-2, 2.3)
 
-    cluster.X_cre1_E = {'X':0.00, 'R_norm':cluster.R500}
-    cluster.X_crp_E  = {'X':0.01, 'R_norm':cluster.R500}
-    cluster.set_density_crp_isodens_scal_param(1.0)
-    cluster.spectrum_crp_model = {'name':'PowerLaw', 'Index':2.3}
-    
     return cluster
 
 
@@ -162,4 +158,121 @@ def set_magnetic_field_model(cluster_in, case='Taylor2006'):
         print('Available models are ...')
         print('Doing nothing')
 
+    return cluster_out
+
+
+#==================================================
+# Set the pure hadronic CR model to the cluster
+#==================================================
+
+def set_pure_hadronic_model(cluster_in, scaling, Xcrp, slope):
+    """
+    Set the CR to pure hadronic model
+    
+    Parameters
+    ----------
+    - cluster_in (minot object): input cluster model
+    - scaling (tupple): scaling[0] is the reference thermodynamic 
+    quantity ('density' or 'pressure') and scaling[1] is the scaling 
+    value eta
+    - Xcrp (float): amplitude as U_CRp / U_th at R500
+    - slope (float): the slope for the CRp
+
+    Outputs
+    ----------
+    - cluster_out (minot object): modified cluster model
+    
+    """
+    
+    cluster_out = copy.deepcopy(cluster_in)
+
+    cluster_out.X_cre1_E = {'X':0.00, 'R_norm':cluster_out.R500}
+    
+    cluster_out.X_crp_E  = {'X':Xcrp, 'R_norm':cluster_out.R500}
+    cluster_out.spectrum_crp_model = {'name':'PowerLaw', 'Index':slope}
+
+    radius = np.logspace(0,4,1000)*u.kpc
+
+    if scaling[0] == 'density':
+        if cluster_out.density_gas_model['name'] in ['doublebeta', 'User']:
+            n_e = cluster_out.get_density_gas_profile(radius)[1]
+            cluster_out.density_crp_model = {'name':'User', 'radius':radius,
+                                             'profile':n_e.value**scaling[1]}
+            
+        else:
+            cluster_out.set_density_crp_isodens_scal_param(scal=scaling[1])
+        
+    elif scaling[0] == 'pressure':
+        if cluster_out.pressure_gas_model['name'] in ['doublebeta', 'User']:
+            p_e = cluster_out.get_pressure_gas_profile(radius)[1]
+            cluster_out.density_crp_model = {'name':'User', 'radius':radius,
+                                             'profile':p_e.value**scaling[1]}
+
+        else:        
+            cluster_out.set_density_crp_isobaric_scal_param(scal=scaling[1])
+        
+    else:
+        raise ValueError('scaling[0] should be "density" or "pressure"')
+        
+    return cluster_out
+
+
+#==================================================
+# Set the pure leptonic CR model to the cluster
+#==================================================
+
+def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
+    """
+    Set the CR to pure leptonic model
+    
+    Parameters
+    ----------
+    - cluster_in (minot object): input cluster model
+    - scaling (tupple): scaling[0] is the reference thermodynamic 
+    quantity ('density' or 'pressure') and scaling[1] is the scaling 
+    value eta
+    - Xcre (float): amplitude as U_CRe / U_th at R500
+    - slope (float): the slope for the CRp
+    - Ecut (quantity): energy cutoff, homogeneous to GeV
+
+    Outputs
+    ----------
+    - cluster_out (minot object): modified cluster model
+    
+    """
+    
+    cluster_out = copy.deepcopy(cluster_in)
+
+    cluster_out.X_crp_E  = {'X':0.00, 'R_norm':cluster_out.R500}
+
+    cluster_out.X_cre1_E = {'X':Xcre1, 'R_norm':cluster_out.R500}
+    cluster_out.spectrum_cre1_model = {'name': 'ExponentialCutoffPowerLaw',
+                                       'Index': -2.0, 'CutoffEnergy':Ecut}
+
+    radius = np.logspace(0,4,1000)*u.kpc
+
+    # Warning here, due to a bug with the key density_cre1_model,
+    # we pass directly the hidden variable
+    
+    if scaling[0] == 'density':
+        if cluster_out.density_gas_model['name'] in ['doublebeta', 'User']:
+            n_e = cluster_out.get_density_gas_profile(radius)[1]
+            cluster_out._density_cre1_model = {'name':'User', 'radius':radius,
+                                               'profile':n_e.value**scaling[1]*u.adu}
+            
+        else:
+            cluster_out.set_density_cre1_isodens_scal_param(scal=scaling[1])
+        
+    elif scaling[0] == 'pressure':
+        if cluster_out.pressure_gas_model['name'] in ['doublebeta', 'User']:
+            p_e = cluster_out.get_pressure_gas_profile(radius)[1]
+            cluster_out._density_cre1_model = {'name':'User', 'radius':radius,
+                                               'profile':p_e.value**scaling[1]*u.adu}
+
+        else:        
+            cluster_out.set_density_cre1_isobaric_scal_param(scal=scaling[1])
+        
+    else:
+        raise ValueError('scaling[0] should be "density" or "pressure"')
+        
     return cluster_out
