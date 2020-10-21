@@ -29,9 +29,6 @@ Einstein telescope obesrvation of nearby clusters and groups \
 See [https://cdsarc.unistra.fr/viz-bin/cat/J/ApJ/511/65] for the full table (Table 4) \
 H0 = 50 km/s/Mpc
 
-- Bonafede et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010A%26A...513A..30B/abstract] \
-Measeurement of the magnetic field of Coma from Faraday rotation measures
-
 - Churazov et al. (2003) [https://ui.adsabs.harvard.edu/abs/2003ApJ...590..225C/abstract] \
 XMM observations of Perseus: Sx and T \
 H0 = 50 km/s/Mpc ?
@@ -40,16 +37,13 @@ H0 = 50 km/s/Mpc ?
 XMM observations of Perseus: gas motion \
 H0 = 70 km/s/Mpc
 
-- Sanders et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.349..952S/abstract] \
-Small scale thermodynamics and abundance in Perseus \
-H0 = 70 km/s/Mpc
-
 - Gitti et al. (2002) [https://ui.adsabs.harvard.edu/abs/2002A%26A...386..456G/abstract] \
 Modeling of the radio mini-halo in a re0-acceleration framework. Profile, 3 point spectrum and spectral index profile are shown \
 H0 = 50 km/s/Mpc
 
 - Sanders et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.349..952S/abstract] \
 Chandra observations in the core, showing temperature and density profile
+H0 = 70 km/s/Mpc
 
 - Taylor et al. (2006) [https://ui.adsabs.harvard.edu/abs/2006MNRAS.368.1500T/abstract] \
 Magnetic field in the center of Perseus
@@ -60,6 +54,9 @@ H0 = 70 km/s/Mpc
 
 - Aleksic et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010ApJ...710..634A/abstract] \
 MAGIC observations of Perseus
+
+- Bonafede et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010A%26A...513A..30B/abstract] \
+Measeurement of the magnetic field of Coma from Faraday rotation measures
 
 - Piffaretti et al (2011) [https://ui.adsabs.harvard.edu/abs/2011A%26A...534A.109P/abstract] \
 MCXC catalog
@@ -131,7 +128,7 @@ This implies β2 = 1.68/3 = 0.56 ± 0.02 \
 However, looking at Ettori et al. (1999), Table 5, it is not consistent with Simionescu et al.: E: β = 0.88 or powerlaw index = 2.3 ; N: beta = 0.67 or powerlaw index = 1.87 ; W: beta = 0.61 or powerlaw index = 1.87 \
 Correcting for clumping leads to a slope of 2.5, i.e. beta = 0.83, in good agreement, this time, with Ettori et al. (1999), but who did not correct for clumping. \
 R200 = 1.79  ± 0.04 Mpc, M = 6.65+0.43-0.46 × 10^14 Msun \
-The best-fitting NFW function has a concentration parameter c = 5.0 ± 0.5
+The best-fitting NFW function has a concentration parameter c = 5.0 ± 0.5 \
 H0 = 70 km/s/Mpc
 
 - Zhuravleva et al. (2014) : \
@@ -140,9 +137,9 @@ H0 = 72 km/s/Mpc
 
 - Urban et al. (2014): \
 Density beta model at r > 10 arcmin: \
-r_c = 13.18±2.31 and beta = 0.71±0.05, n0 is not provided
+r_c = 13.18±2.31 and beta = 0.71±0.05, n0 is not provided \
 Pressure profile: \
-Planck V (2013) with r500=59.7arcmin±0.4 arcmin gives a good fit
+Planck V (2013) with r500=59.7arcmin±0.4 arcmin gives a good fit \
 H0 = 70 km/s/Mpc
 
 
@@ -154,10 +151,10 @@ The temperature profile is flat in the outskirt (0.3-2 Mpc), reaching 6.3 keV \
 H0 = 50 km/s/Mpc
 
 - From Churazov et al. (2003), valid in the core: \
-T_e (r) = 7 * (1+(r/100)**3) / (2.3+(r/100)**3) keV
+T_e (r) = 7 * (1+(r/100)**3) / (2.3+(r/100)**3) keV \
 H0 = 50 km/s/Mpc
 
-- The projected temperature profile is provided in Simionescu et al. (2011)
+- The projected temperature profile is provided in Simionescu et al. (2011) \
 H0 = 70 km/s/Mpc
 
 - Urban et al. (2014): \
@@ -197,7 +194,7 @@ In MAGIC paper: "The reported radial spectral steepening of the radio mini-halo 
 
 ## Redshift and coordinates
 
-z = 0.017284 (Hitomi colaboration 2018)
+z = 0.017284 (Hitomi colaboration 2018)\
 R.A. Dec. = 49.950667, 41.511696 (NED)
 
 ## Mass
