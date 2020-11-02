@@ -30,7 +30,7 @@ def default_model():
 
     outdir = os.getenv('CTAPHYS_OUT_DIR')+'Perseus_KSP_calibration'
     
-    NR500_trunc = 3
+    NR500_trunc = 10
     redshift    = 0.017284
     M500        = 6.2e14*u.Msun
     RA          = 49.950667*u.deg
@@ -82,7 +82,7 @@ def set_thermal_model(cluster_in):
                                      'n_02':0.0035*u.cm**-3}
 
     # Pressure
-    radius = np.logspace(0,4,1000)
+    radius = np.logspace(-1,5,10000)
     T_e = 7.0*(1+(radius/73.8)**3)/(2.3+(radius/73.8)**3)*u.keV * (1+(radius/1600)**1.7)**-(2.0/2)
     n_e = cluster_out.get_density_gas_profile(radius*u.kpc)[1]
     P_e = n_e*T_e

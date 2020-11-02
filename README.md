@@ -2,103 +2,12 @@
 
 This repository contain the notebooks and scripts used for the Perseus cluster model calibration in the context of CTA observations.
 
-
-## Relevant biliographie
-
--  Hanisch and Erickson (1980) [https://ui.adsabs.harvard.edu/abs/1980AJ.....85..183H/abstract] \
-Non detection of the Perseus halo
-
--  Noordam and  de Bruyn (1982) [https://ui.adsabs.harvard.edu/abs/1982Natur.299..597N/abstract] \
-WSRT processing applyied to Perseus
-
-- Pedlar et al. (1990) [https://ui.adsabs.harvard.edu/abs/1990MNRAS.246..477P/abstract, https://www.researchgate.net/publication/234294211_The_Radio_Structure_of_NGC1275] \
-Radio structure around NGC1275
-
-- Burns et al. (1992) [https://ui.adsabs.harvard.edu/abs/1992ApJ...388L..49B/abstract] \
-Confirmation of the Perseus mini-halo
-
-- Sijbring (1993) [https://ui.adsabs.harvard.edu/abs/1993rchl.book.....S/abstract] \
-WSRT observations of Perseus
-
-- Ettori et al. (1999) [https://ui.adsabs.harvard.edu/abs/1998MNRAS.300..837E/abstract] \
-ROSAT PSPC observations of Perseus \
-H0 = 50 km/s/Mpc
-
-- Jones & Forman (1999) [https://ui.adsabs.harvard.edu/abs/1999ApJ...511...65J/abstract] \
-Einstein telescope obesrvation of nearby clusters and groups \
-See [https://cdsarc.unistra.fr/viz-bin/cat/J/ApJ/511/65] for the full table (Table 4) \
-H0 = 50 km/s/Mpc
-
-- Churazov et al. (2003) [https://ui.adsabs.harvard.edu/abs/2003ApJ...590..225C/abstract] \
-XMM observations of Perseus: Sx and T \
-H0 = 50 km/s/Mpc ?
-
-- Churazov et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.347...29C/abstract] \
-XMM observations of Perseus: gas motion \
-H0 = 70 km/s/Mpc
-
-- Gitti et al. (2002) [https://ui.adsabs.harvard.edu/abs/2002A%26A...386..456G/abstract] \
-Modeling of the radio mini-halo in a re0-acceleration framework. Profile, 3 point spectrum and spectral index profile are shown \
-H0 = 50 km/s/Mpc
-
-- Sanders et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.349..952S/abstract] \
-Chandra observations in the core, showing temperature and density profile
-H0 = 70 km/s/Mpc
-
-- Taylor et al. (2006) [https://ui.adsabs.harvard.edu/abs/2006MNRAS.368.1500T/abstract] \
-Magnetic field in the center of Perseus
-
-- Simionescu et al. (2011) [https://ui.adsabs.harvard.edu/abs/2011Sci...331.1576S/abstract] \
-Baryon physics to the edge of Perseus in 2 specific directions \
-H0 = 70 km/s/Mpc
-
-- Aleksic et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010ApJ...710..634A/abstract] \
-MAGIC observations of Perseus
-
-- Bonafede et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010A%26A...513A..30B/abstract] \
-Measeurement of the magnetic field of Coma from Faraday rotation measures
-
-- Piffaretti et al (2011) [https://ui.adsabs.harvard.edu/abs/2011A%26A...534A.109P/abstract] \
-MCXC catalog
-
-- Aleksic et al. (2012) [https://ui.adsabs.harvard.edu/abs/2012A%26A...541A..99A/abstract] \
-MAGIC observations of Perseus
-
-- Werner et al. (2013) [https://ui.adsabs.harvard.edu/abs/2013Natur.502..656W/abstract] \
-Metalicity profile of Perseus
-
-- Zandanel et al. (2014) [http://adsabs.harvard.edu/abs/2014MNRAS.438..124Z] \
-Hadronic model for Perseus compared to Pedlar et al. (1990) data
-
-- Zhuravleva et al. (2014) [https://ui.adsabs.harvard.edu/abs/2015MNRAS.450.4184Z/abstract] \
-Density fluctuation in Perseus
-
-- Urban et al. (2014) [https://ui.adsabs.harvard.edu/abs/2014MNRAS.437.3939U/abstract] \
-Azimuthaly resolved X-ray spectroscopy of Perseus
-
-- Ahnen et al. (2016) [http://adsabs.harvard.edu/abs/2016A%26A...589A..33A] \
-MAGIC observations of Perseus
-
-- Gendron-Marsolais et al. (2017) [http://adsabs.harvard.edu/abs/2017MNRAS.469.3872G]\
-Deep VLA observations of Perseus
-
-- Walker et al. (2017) [https://ui.adsabs.harvard.edu/abs/2017MNRAS.468.2506W/abstract] \
-Giant Kelvin-Helmoltz instability in Perseus
-
-- Hitomi Collaboration (2018) [https://ui.adsabs.harvard.edu/abs/2018PASJ...70....9H/abstract] \
-Gas motion in Perseus
-
-- Donnert et al. (2018) [https://ui.adsabs.harvard.edu/abs/2018SSRv..214..122D/abstract] \
-Magnetic field review
-
-- Van Weeren et al. (2018) [https://ui.adsabs.harvard.edu/abs/2019SSRv..215...16V/abstract] \
-Diffuse cluster scale radio emission review
-
-- Bykov et al. (2018) [https://ui.adsabs.harvard.edu/abs/2019SSRv..215...14B/abstract] \
-Shocks and nonthermal particles in clusters, a review
-
-- Johnson et al. (2020) [https://ui.adsabs.harvard.edu/abs/2020ApJ...888..101J/abstract] \
-Determination of magnetic field from RM
+## Common framework
+- Cosmology: Flat LCDM, Omega_m = 0.3, Omega_L = 0.7, H_0 = 70 km/s/Mpc
+- Clsuter's redshift: z = 0.017284 (Hitomi colaboration 2018)
+- Cluster's coordinates: R.A. Dec. = 49.950667, 41.511696 (NED)
+- EBL model: Dominguez et al. (2011)
+- Mass: r500=59.7arcmin±0.4 arcmin from Urban et al. (2014)
 
 ## Gas thermal density
 
@@ -209,3 +118,100 @@ Name = RXC J0319.7+4130  \
 L500 = 6.217359 \
 M500 = 6.1508 \
 R500 = 1.2856
+
+## Relevant biliographie
+
+-  Hanisch and Erickson (1980) [https://ui.adsabs.harvard.edu/abs/1980AJ.....85..183H/abstract] \
+Non detection of the Perseus halo
+
+-  Noordam and  de Bruyn (1982) [https://ui.adsabs.harvard.edu/abs/1982Natur.299..597N/abstract] \
+WSRT processing applyied to Perseus
+
+- Pedlar et al. (1990) [https://ui.adsabs.harvard.edu/abs/1990MNRAS.246..477P/abstract, https://www.researchgate.net/publication/234294211_The_Radio_Structure_of_NGC1275] \
+Radio structure around NGC1275
+
+- Burns et al. (1992) [https://ui.adsabs.harvard.edu/abs/1992ApJ...388L..49B/abstract] \
+Confirmation of the Perseus mini-halo
+
+- Sijbring (1993) [https://ui.adsabs.harvard.edu/abs/1993rchl.book.....S/abstract] \
+WSRT observations of Perseus
+
+- Ettori et al. (1999) [https://ui.adsabs.harvard.edu/abs/1998MNRAS.300..837E/abstract] \
+ROSAT PSPC observations of Perseus \
+H0 = 50 km/s/Mpc
+
+- Jones & Forman (1999) [https://ui.adsabs.harvard.edu/abs/1999ApJ...511...65J/abstract] \
+Einstein telescope obesrvation of nearby clusters and groups \
+See [https://cdsarc.unistra.fr/viz-bin/cat/J/ApJ/511/65] for the full table (Table 4) \
+H0 = 50 km/s/Mpc
+
+- Churazov et al. (2003) [https://ui.adsabs.harvard.edu/abs/2003ApJ...590..225C/abstract] \
+XMM observations of Perseus: Sx and T \
+H0 = 50 km/s/Mpc ?
+
+- Churazov et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.347...29C/abstract] \
+XMM observations of Perseus: gas motion \
+H0 = 70 km/s/Mpc
+
+- Gitti et al. (2002) [https://ui.adsabs.harvard.edu/abs/2002A%26A...386..456G/abstract] \
+Modeling of the radio mini-halo in a re0-acceleration framework. Profile, 3 point spectrum and spectral index profile are shown \
+H0 = 50 km/s/Mpc
+
+- Sanders et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.349..952S/abstract] \
+Chandra observations in the core, showing temperature and density profile
+H0 = 70 km/s/Mpc
+
+- Taylor et al. (2006) [https://ui.adsabs.harvard.edu/abs/2006MNRAS.368.1500T/abstract] \
+Magnetic field in the center of Perseus
+
+- Simionescu et al. (2011) [https://ui.adsabs.harvard.edu/abs/2011Sci...331.1576S/abstract] \
+Baryon physics to the edge of Perseus in 2 specific directions \
+H0 = 70 km/s/Mpc
+
+- Aleksic et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010ApJ...710..634A/abstract] \
+MAGIC observations of Perseus
+
+- Bonafede et al. (2010) [https://ui.adsabs.harvard.edu/abs/2010A%26A...513A..30B/abstract] \
+Measeurement of the magnetic field of Coma from Faraday rotation measures
+
+- Piffaretti et al (2011) [https://ui.adsabs.harvard.edu/abs/2011A%26A...534A.109P/abstract] \
+MCXC catalog
+
+- Aleksic et al. (2012) [https://ui.adsabs.harvard.edu/abs/2012A%26A...541A..99A/abstract] \
+MAGIC observations of Perseus
+
+- Werner et al. (2013) [https://ui.adsabs.harvard.edu/abs/2013Natur.502..656W/abstract] \
+Metalicity profile of Perseus
+
+- Zandanel et al. (2014) [http://adsabs.harvard.edu/abs/2014MNRAS.438..124Z] \
+Hadronic model for Perseus compared to Pedlar et al. (1990) data
+
+- Zhuravleva et al. (2014) [https://ui.adsabs.harvard.edu/abs/2015MNRAS.450.4184Z/abstract] \
+Density fluctuation in Perseus
+
+- Urban et al. (2014) [https://ui.adsabs.harvard.edu/abs/2014MNRAS.437.3939U/abstract] \
+Azimuthaly resolved X-ray spectroscopy of Perseus
+
+- Ahnen et al. (2016) [http://adsabs.harvard.edu/abs/2016A%26A...589A..33A] \
+MAGIC observations of Perseus
+
+- Gendron-Marsolais et al. (2017) [http://adsabs.harvard.edu/abs/2017MNRAS.469.3872G]\
+Deep VLA observations of Perseus
+
+- Walker et al. (2017) [https://ui.adsabs.harvard.edu/abs/2017MNRAS.468.2506W/abstract] \
+Giant Kelvin-Helmoltz instability in Perseus
+
+- Hitomi Collaboration (2018) [https://ui.adsabs.harvard.edu/abs/2018PASJ...70....9H/abstract] \
+Gas motion in Perseus
+
+- Donnert et al. (2018) [https://ui.adsabs.harvard.edu/abs/2018SSRv..214..122D/abstract] \
+Magnetic field review
+
+- Van Weeren et al. (2018) [https://ui.adsabs.harvard.edu/abs/2019SSRv..215...16V/abstract] \
+Diffuse cluster scale radio emission review
+
+- Bykov et al. (2018) [https://ui.adsabs.harvard.edu/abs/2019SSRv..215...14B/abstract] \
+Shocks and nonthermal particles in clusters, a review
+
+- Johnson et al. (2020) [https://ui.adsabs.harvard.edu/abs/2020ApJ...888..101J/abstract] \
+Determination of magnetic field from RM
