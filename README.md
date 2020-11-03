@@ -2,12 +2,20 @@
 
 This repository contain the notebooks and scripts used for the Perseus cluster model calibration in the context of CTA observations.
 
-## Common framework
-- Cosmology: Flat LCDM, Omega_m = 0.3, Omega_L = 0.7, H_0 = 70 km/s/Mpc
-- Clsuter's redshift: z = 0.017284 (Hitomi colaboration 2018)
-- Cluster's coordinates: R.A. Dec. = 49.950667, 41.511696 (NED)
-- EBL model: Dominguez et al. (2011)
-- Mass: r500=59.7arcmin±0.4 arcmin from Urban et al. (2014)
+## Framework
+### Global parameters
+- Cosmology: Flat LCDM, Omega_m = 0.3, Omega_L = 0.7, H_0 = 70 km/s/Mpc \
+- Cluster's redshift: z = 0.017284 (Hitomi colaboration 2018) \
+- Cluster's coordinates: R.A. Dec. = 49.950667, 41.511696 (NED) \
+- EBL model: Dominguez et al. (2011) \
+- Mass: r500=59.7arcmin±0.4 arcmin from Urban et al. (2014) \
+
+### CR parameters
+- Epmin: pp interaction threshold. MAGIC uses Ppmin = 0.8 m c, which is nearly the same
+- Epmax: cutoff at 10 PeV. We expect a cutoff at PeV energies because these protons are no longer confined (Völk et al. 1996; Berezinsky et al. 1997; Pinzke & Pfrommer 2010)
+- Proton spectrum: power law in momentum space
+- Helium mass fraction: 0.2735, the baseline in minot
+- Abundance: 0.3, in agreement with Werner et al. (2013)
 
 ## Gas thermal density
 
@@ -145,6 +153,10 @@ Einstein telescope obesrvation of nearby clusters and groups \
 See [https://cdsarc.unistra.fr/viz-bin/cat/J/ApJ/511/65] for the full table (Table 4) \
 H0 = 50 km/s/Mpc
 
+- Gitti et al. (2002) [https://ui.adsabs.harvard.edu/abs/2002A%26A...386..456G/abstract] \
+Modeling of the radio mini-halo in a re0-acceleration framework. Profile, 3 point spectrum and spectral index profile are shown \
+H0 = 50 km/s/Mpc
+
 - Churazov et al. (2003) [https://ui.adsabs.harvard.edu/abs/2003ApJ...590..225C/abstract] \
 XMM observations of Perseus: Sx and T \
 H0 = 50 km/s/Mpc ?
@@ -153,13 +165,12 @@ H0 = 50 km/s/Mpc ?
 XMM observations of Perseus: gas motion \
 H0 = 70 km/s/Mpc
 
-- Gitti et al. (2002) [https://ui.adsabs.harvard.edu/abs/2002A%26A...386..456G/abstract] \
-Modeling of the radio mini-halo in a re0-acceleration framework. Profile, 3 point spectrum and spectral index profile are shown \
-H0 = 50 km/s/Mpc
-
 - Sanders et al. (2004) [https://ui.adsabs.harvard.edu/abs/2004MNRAS.349..952S/abstract] \
 Chandra observations in the core, showing temperature and density profile
 H0 = 70 km/s/Mpc
+
+-  de Bruyn & Brentjens (2005) [https://ui.adsabs.harvard.edu/abs/2005A%26A...441..931D/abstract] \
+WSRT observations and polarization
 
 - Taylor et al. (2006) [https://ui.adsabs.harvard.edu/abs/2006MNRAS.368.1500T/abstract] \
 Magnetic field in the center of Perseus
