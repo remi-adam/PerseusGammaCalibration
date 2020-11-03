@@ -3,14 +3,14 @@
 This repository contain the notebooks and scripts used for the Perseus cluster model calibration in the context of CTA observations.
 
 ## Framework
-### Global parameters
+##### Global parameters
 - Cosmology: Flat LCDM, Omega_m = 0.3, Omega_L = 0.7, H_0 = 70 km/s/Mpc \
 - Cluster's redshift: z = 0.017284 (Hitomi colaboration 2018) \
 - Cluster's coordinates: R.A. Dec. = 49.950667, 41.511696 (NED) \
 - EBL model: Dominguez et al. (2011) \
 - Mass: r500=59.7arcmin±0.4 arcmin from Urban et al. (2014) \
 
-### CR parameters
+##### CR parameters
 - Epmin: pp interaction threshold. MAGIC uses Ppmin = 0.8 m c, which is nearly the same
 - Epmax: cutoff at 10 PeV. We expect a cutoff at PeV energies because these protons are no longer confined (Völk et al. 1996; Berezinsky et al. 1997; Pinzke & Pfrommer 2010)
 - Proton spectrum: power law in momentum space
