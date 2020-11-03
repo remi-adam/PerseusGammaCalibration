@@ -7,7 +7,8 @@ import os
 import copy
 import astropy.units as u
 import astropy.constants as const
-from astropy.cosmology import Planck15 as cosmo
+from astropy.cosmology import FlatLambdaCDM
+cosmo = FlatLambdaCDM(70, 0.3, m_nu=[0.0,0.0,0.06]*u.eV, Tcmb0=2.725, Ob0=0.0486)
 import minot
 
 
@@ -15,7 +16,7 @@ import minot
 # Define the default cluster model
 #==================================================
 
-def default_model():
+def default_model(directory=None):
     """
     Define the default cluster model
     
@@ -28,23 +29,39 @@ def default_model():
     
     """
 
-    outdir = os.getenv('CTAPHYS_OUT_DIR')+'Perseus_KSP_calibration'
-    
-    NR500_trunc = 10
-    redshift    = 0.017284
-    M500        = 6.2e14*u.Msun
-    RA          = 49.950667*u.deg
-    Dec         = 41.511696*u.deg
+    if directory is None:
+        outdir = os.getenv('CTAPHYS_OUT_DIR')+'Perseus_KSP_calibration'
+    else:
+        outdir = directory
+        
+    #---------- Global parameters
+    NR500_trunc = 3
+    redshift    = 0.017284         # Hitomi 2018
+    theta500    = 59.7*u.arcmin    # Urban (2014) PIP V UPP best fit
+    RA          = 49.950667*u.deg  # NED (NGC 1275)
+    Dec         = 41.511696*u.deg  # NED (NGC 1275)
 
+    Yhe         = 0.2735           # Baseline in minot
+    Abundance   = 0.3              # In agreement with Werner et al. (2013)
+
+    EBL         = 'dominguez'      # Arbitrary
+    
+    #---------- Define cluster
     cluster = minot.Cluster(name='Perseus',
                             redshift=redshift,
-                            M500=M500,
                             RA=RA, Dec=Dec,
                             cosmology=cosmo,
                             silent=True,
                             output_dir=outdir)
     cluster.R_truncation = NR500_trunc*cluster.R500
+    cluster.theta500     = theta500
 
+    cluster.helium_mass_fraction = Yhe
+    cluster.abundance            = Abundance
+
+    cluster.EBL_model = EBL
+
+    #---------- Set the model
     cluster = set_thermal_model(cluster)
     cluster = set_magnetic_field_model(cluster, case='Taylor2006')
     cluster = set_pure_hadronic_model(cluster, ('density', 1.0), 1e-2, 2.3)
@@ -73,17 +90,23 @@ def set_thermal_model(cluster_in):
     cluster_out = copy.deepcopy(cluster_in)
 
     # Density
+    cor1 = cluster_out.cosmo.H0.value / 50.0 # From Churazov 2003
+    cor2 = cluster_out.cosmo.H0.value / 70.0 # From Urban 2014
+    arcmin2kpc = cluster_out.cosmo.kpc_proper_per_arcmin(cluster_out.redshift)
+    
     cluster_out.density_gas_model = {'name':'doublebeta',
                                      'beta1':1.2,
-                                     'r_c1':59*u.kpc,
-                                     'n_01':0.045*u.cm**-3,
+                                     'r_c1':80*u.kpc * cor1**-1,
+                                     'n_01':0.039*u.cm**-3 * cor1**0.5,
                                      'beta2':0.71,
-                                     'r_c2':287*u.kpc,
-                                     'n_02':0.0035*u.cm**-3}
+                                     'r_c2':(13.18*u.arcmin*arcmin2kpc).to('kpc'),
+                                     'n_02':0.0036*u.cm**-3 * cor2**0.5}    
 
     # Pressure
     radius = np.logspace(-1,5,10000)
-    T_e = 7.0*(1+(radius/73.8)**3)/(2.3+(radius/73.8)**3)*u.keV * (1+(radius/1600)**1.7)**-(2.0/2)
+    cor1 = cluster_out.cosmo.H0.value / 50.0 # From Churazov 2003
+    cor2 = cluster_out.cosmo.H0.value / 70.0 # From Urban 2014
+    T_e = 7*u.keV*(1+(radius/100*cor1)**3)/(2.3+(radius/100*cor1)**3)*(1+(radius/1600*cor2)**1.7)**-1
     n_e = cluster_out.get_density_gas_profile(radius*u.kpc)[1]
     P_e = n_e*T_e
     cluster_out.pressure_gas_model = {'name':'User', 'radius':radius*u.kpc, 'profile':P_e}
@@ -114,7 +137,7 @@ def set_magnetic_field_model(cluster_in, case='Taylor2006'):
 
     #----- Useful general quantities
     radius = np.logspace(0,4,1000)*u.kpc
-    n0_coma = 3.36e-3*u.cm**-3
+    n0_coma = 2.89e-3*u.cm**-3 * (50.0/cluster_out.cosmo.H0.value)**-0.5
 
     #----- Cases
     if case == 'Taylor2006':
@@ -125,7 +148,7 @@ def set_magnetic_field_model(cluster_in, case='Taylor2006'):
         cluster_out.magfield_model = {'name':'User', 'radius':radius, 'profile':25*u.uG*(B/B_ref[0])**(2.0/3)}
 
     elif case == 'Walker2017':
-        cluster_out.name = 'Walker (2017)'
+        cluster_out.name = 'Walker (2017) + pressure model'
         r, P = cluster_out.get_pressure_gas_profile(radius)
         Y = cluster_out.helium_mass_fraction
         Z = cluster_out.metallicity_sol*cluster_out.abundance
@@ -155,7 +178,8 @@ def set_magnetic_field_model(cluster_in, case='Taylor2006'):
         cluster_out.magfield_model = {'name':'User', 'radius':radius,
                                       'profile':5.0*u.uG * ((n_e/n0_coma).to_value(''))**(2.0/3)}
     else:
-        print('Available models are ...')
+        print('Available models are: ')
+        print('   Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std')
         print('Doing nothing')
 
     return cluster_out
