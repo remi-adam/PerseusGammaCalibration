@@ -45,6 +45,10 @@ def default_model(directory=None):
     Abundance   = 0.3              # In agreement with Werner et al. (2013)
 
     EBL         = 'dominguez'      # Arbitrary
+
+    #Epmin = (1+0.8**2)**0.5*(const.m_p*const.c**2)).to('GeV') # Aleksic et al. (2012)
+    Epmin = minot.ClusterTools.cluster_spectra.pp_pion_kinematic_energy_threshold()*u.GeV
+    Epmax = 10*u.PeV
     
     #---------- Define cluster
     cluster = minot.Cluster(name='Perseus',
@@ -60,6 +64,8 @@ def default_model(directory=None):
     cluster.abundance            = Abundance
 
     cluster.EBL_model = EBL
+    cluster.Epmin     = Epmin
+    cluster.Epmax     = Epmax
 
     #---------- Set the model
     cluster = set_thermal_model(cluster)
@@ -213,8 +219,8 @@ def set_pure_hadronic_model(cluster_in, scaling, Xcrp, slope):
     cluster_out.X_cre1_E = {'X':0.00, 'R_norm':cluster_out.R500}
     
     cluster_out.X_crp_E  = {'X':Xcrp, 'R_norm':cluster_out.R500}
-    cluster_out.spectrum_crp_model = {'name':'PowerLaw', 'Index':slope}
-
+    #cluster_out.spectrum_crp_model = {'name':'PowerLaw', 'Index':slope}
+    cluster_out.spectrum_crp_model = {'name':'MomentumPowerLaw', 'Index':slope, 'Mass':(const.m_p*const.c**2)}
     radius = np.logspace(0,4,1000)*u.kpc
 
     if scaling[0] == 'density':
