@@ -281,14 +281,11 @@ def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
 
     radius = np.logspace(0,4,1000)*u.kpc
 
-    # Warning here, due to a bug with the key density_cre1_model,
-    # we pass directly the hidden variable
-    
     if scaling[0] == 'density':
         if cluster_out.density_gas_model['name'] in ['doublebeta', 'User']:
             n_e = cluster_out.get_density_gas_profile(radius)[1]
-            cluster_out._density_cre1_model = {'name':'User', 'radius':radius,
-                                               'profile':n_e.value**scaling[1]*u.adu}
+            cluster_out.density_cre1_model = {'name':'User', 'radius':radius,
+                                              'profile':n_e.value**scaling[1]}
             
         else:
             cluster_out.set_density_cre1_isodens_scal_param(scal=scaling[1])
@@ -296,8 +293,8 @@ def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
     elif scaling[0] == 'pressure':
         if cluster_out.pressure_gas_model['name'] in ['doublebeta', 'User']:
             p_e = cluster_out.get_pressure_gas_profile(radius)[1]
-            cluster_out._density_cre1_model = {'name':'User', 'radius':radius,
-                                               'profile':p_e.value**scaling[1]*u.adu}
+            cluster_out.density_cre1_model = {'name':'User', 'radius':radius,
+                                              'profile':p_e.value**scaling[1]}
 
         else:        
             cluster_out.set_density_cre1_isobaric_scal_param(scal=scaling[1])

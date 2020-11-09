@@ -27,7 +27,7 @@ def radio_profile_data(distance_correction):
     - data (dict): a dictionary that contain the data
     
     """
-
+    
     # Extracted from Gitti's paper
     dat_dir    = os.getenv('CTAPHYS_EDAT_DIR')+'Radio'
     prof_file  = dat_dir+'/Perseus_radio_profile_Gitti.txt'
@@ -53,10 +53,10 @@ def radio_profile_data(distance_correction):
     prof_data2['error_p'] =    -(prof_data2['flux']   - prof_data2['flux_p']) # Mean-min difference
     
     # Compute errors
-    error_p = np.abs(prof_data2['flux_p']-np.array(prof_data1['flux']))*u.Jy/u.arcmin**2 # 
-    error_m = np.abs(prof_data2['flux_m']-np.array(prof_data1['flux']))*u.Jy/u.arcmin**2 # 
-    error   =   0.5*(prof_data1['error_m']  +   prof_data1['error_p'])*u.Jy/u.arcmin**2  # Symetrized error
-    #error   =   0.5*(prof_data2['flux_p']   -   prof_data2['flux_m'])*u.Jy/u.arcmin**2   # Fmin-Fmax / 2
+    error_p = np.abs(prof_data2['flux_p']-np.array(prof_data1['flux']))*u.Jy/u.arcmin**2  # 
+    error_m = np.abs(prof_data2['flux_m']-np.array(prof_data1['flux']))*u.Jy/u.arcmin**2  # 
+    #error   = 0.5 * (prof_data1['error_m']   +   prof_data1['error_p'])*u.Jy/u.arcmin**2  # Symetrized error
+    error   = np.array(prof_data1['flux'])*u.Jy/u.arcmin**2 * 0.3                         # Assume 20% error
     
     # Combinaning the two
     prof_data = {'radius':prof_data2['radius']*u.kpc*distance_correction, # standard radius
