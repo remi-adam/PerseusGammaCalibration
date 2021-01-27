@@ -227,8 +227,8 @@ Shocks and nonthermal particles in clusters, a review
 - Johnson et al. (2020) [https://ui.adsabs.harvard.edu/abs/2020ApJ...888..101J/abstract] \
 Determination of magnetic field from RM
 
-- Gendron-Marsolai et al. (2020) [https://ui.adsabs.harvard.edu/abs/2021arXiv210105305G/abstract] \
-VLA resolves unexpected radio structures in the Perseus cluster of galaxies
-
 - Gendron-Marsolai et al. (2020) [http://adsabs.harvard.edu/abs/2020MNRAS.499.5791G] \
 High-resolution VLA low radio frequency observations of the Perseus cluster: radio lobes, mini-halo, and bent-jet radio galaxies
+
+- Gendron-Marsolai et al. (2021) [https://ui.adsabs.harvard.edu/abs/2021arXiv210105305G/abstract] \
+VLA resolves unexpected radio structures in the Perseus cluster of galaxies
