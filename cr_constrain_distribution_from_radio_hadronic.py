@@ -114,13 +114,6 @@ def model(params, cluster, data):
 
 if __name__ == "__main__":
 
-    import sys
-    print(sys.argv[1])
-    
-
-    import pdb
-    pdb.set_trace()
-
     #========== Parameters
     Nmc         = 10         # Number of Monte Carlo trials
     fit_index   = False       # Fit the spectral index profile
