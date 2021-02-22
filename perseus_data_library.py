@@ -164,7 +164,7 @@ def radio_consistency(radio_data, kpcperarcmin, check=True):
         print('Flux from profile:', flux_from_profile)
         print('Flux from spectrum:', radio_data['info']['prof_freq'],
               radio_data['spectrum']['freq'][0], radio_data['spectrum']['flux'][0])
-        print('flux correcction', flux_correction_factor)
+        print('flux correcction (to be applied to profile)', flux_correction_factor)
 
     return flux_correction_factor
 
