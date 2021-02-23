@@ -274,11 +274,11 @@ def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
     cluster_out = copy.deepcopy(cluster_in)
 
     cluster_out.X_crp_E  = {'X':0.00, 'R_norm':cluster_out.R500}
-
+    
     cluster_out.X_cre1_E = {'X':Xcre1, 'R_norm':cluster_out.R500}
     cluster_out.spectrum_cre1_model = {'name': 'ExponentialCutoffPowerLaw',
-                                       'Index': -2.0, 'CutoffEnergy':Ecut}
-
+                                       'Index': slope, 'CutoffEnergy':Ecut}
+    
     radius = np.logspace(0,4,1000)*u.kpc
 
     if scaling[0] == 'density':
