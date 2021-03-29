@@ -106,8 +106,8 @@ def set_thermal_model(cluster_in):
                                      'n_01':0.039*u.cm**-3 * cor1**0.5,
                                      'beta2':0.71,
                                      'r_c2':(13.18*u.arcmin*arcmin2kpc).to('kpc'),
-                                     'n_02':0.0036*u.cm**-3 * cor2**0.5}    
-
+                                     'n_02':0.0036*u.cm**-3 * cor2**0.5}
+    
     # Pressure
     radius = np.logspace(-1,5,10000)
     cor1 = cluster_out.cosmo.H0.value / 50.0 # From Churazov 2003

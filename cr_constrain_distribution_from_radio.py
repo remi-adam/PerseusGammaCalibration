@@ -683,8 +683,8 @@ if __name__ == "__main__":
     #========== Parameters
     Nmc         = 100         # Number of Monte Carlo trials
     fit_index   = False      # Fit the spectral index profile
-    mcmc_nsteps = 2000         # number of MCMC points
-    mcmc_burnin = 1000        # number of MCMC burnin points
+    mcmc_nsteps = 500         # number of MCMC points
+    mcmc_burnin = 0        # number of MCMC burnin points
     mcmc_reset  = False      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     model_case  = 'Leptonic' # 'Hadronic' or 'Leptonic'
@@ -708,7 +708,7 @@ if __name__ == "__main__":
     elif model_case == 'Leptonic':
         cluster = perseus_model_library.default_model(directory=output_dir)
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
-        cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 2.0), 7e-7, -2.0, 0.23*u.GeV)        
+        cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 2.0), 7e-7, -2.0, 0.23*u.GeV)
     else:
         raise ValueError('Only Hadronic or Leptonic are possible')
     cluster.Npt_per_decade_integ = 10
@@ -728,9 +728,9 @@ if __name__ == "__main__":
         par_max    = [10, 3, 4]
     if model_case == 'Leptonic':
         param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'E_{cut} (GeV)']
-        par0       = np.array([1e-2, 1.6, 3.0, 1e9])
+        par0       = np.array([1, 1.0, 3.0, 1e9])
         par_min    = [0,    0, 2, 9.9e8]
-        par_max    = [100,  3, 5, 1.1e9]
+        par_max    = [1e3,  3, 5, 1.1e9]
 
     run_function_mcmc(cluster, par0, par_min, par_max,
                       mcmc_nsteps=mcmc_nsteps, nwalkers=10,
