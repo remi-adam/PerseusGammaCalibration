@@ -1,7 +1,8 @@
 """
 This script is part of the CTA key science project dedicated to Perseus. 
 Here, we constrain the Perseus CR distribution (spectral and spatial) using 
-radio data, via an MCMC approach. This is the pure hadronic model.
+radio data, via an MCMC approach. This includes both pure hadronic and pure 
+leptonioc models.
 """
 
 #========================================
@@ -681,15 +682,15 @@ def run_function_mcmc(cluster, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 100         # Number of Monte Carlo trials
+    Nmc         = 10         # Number of Monte Carlo trials
     fit_index   = False      # Fit the spectral index profile
-    mcmc_nsteps = 2000         # number of MCMC points
-    mcmc_burnin = 1000        # number of MCMC burnin points
+    mcmc_nsteps = 200         # number of MCMC points
+    mcmc_burnin = 0        # number of MCMC burnin points
     mcmc_reset  = False      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
-    model_case  = 'Leptonic' # 'Hadronic' or 'Leptonic'
-    #output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
-    output_dir = '/Users/adam/Desktop/'+model_case
+    model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
+    output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
+    #output_dir = '/Users/adam/Desktop/'+model_case
     
     #========== Information
     print('========================================')
