@@ -30,6 +30,9 @@ from kesacco.Tools.plotting import seaborn_corner
 from kesacco.Tools import mcmc_common
 import minot
 
+# The cutoff energy for the leptonic model if powerlaw is needed
+E_cut_ref = 1e15
+
 
 #========================================
 # MCMC post analysys
@@ -77,7 +80,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     param_MC = np.zeros((Nmc, ndim))
     for i in range(Nmc):
         param_MC[i,:] = param_flat[np.random.randint(0, high=Nsample), :] # randomly taken from chains
-
+        
     #========== Statistics results
     #----- Parameters
     par_best, par_percentile = mcmc_common.chains_statistics(param_chains, lnL_chains,
@@ -240,8 +243,11 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
         cluster = perseus_model_library.set_pure_hadronic_model(cluster, ('density', param_best[1]),
                                                                 param_best[0]*1e-2, param_best[2])
     if model_case == 'Leptonic':
+        ##Ecut = param_best[3]
+        Ecut = E_cut_ref
         cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', param_best[1]),
-                                                                param_best[0]*1e-5, param_best[2], param_best[3]*u.GeV)
+                                                                param_best[0]*1e-5, param_best[2],
+                                                                Ecut*u.GeV)
     # Hadronic
     E, dN_dEdSdt = cluster.get_gamma_spectrum(energy, 
                                               Rmin=None, Rmax=cluster.R500,
@@ -271,8 +277,11 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
             cluster = perseus_model_library.set_pure_hadronic_model(cluster, ('density', param_MC[imc,1]), 
                                                                     param_MC[imc,0]*1e-2, param_MC[imc,2])
         if model_case == 'Leptonic':
+            ##Ecut = param_MC[imc,3]
+            Ecut = E_cut_ref
             cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', param_MC[imc,1]),
-                                                                    param_MC[imc,0]*1e-5, param_MC[imc,2], param_MC[imc,3]*u.GeV)
+                                                                    param_MC[imc,0]*1e-5, param_MC[imc,2],
+                                                                    Ecut*u.GeV)
 
         spec_g_mci = cluster.get_gamma_spectrum(energy, Rmin=None, Rmax=cluster.R500,
                                                 type_integral='cylindrical',
@@ -299,8 +308,11 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
             cluster = perseus_model_library.set_pure_hadronic_model(cluster, ('density', param_MC[imc,1]), 
                                                                     param_MC[imc,0]*1e-2, param_MC[imc,2])
         if model_case == 'Leptonic':
+            ##Ecut = param_MC[imc,3]
+            Ecut = E_cut_ref
             cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', param_MC[imc,1]),
-                                                                    param_MC[imc,0]*1e-5, param_MC[imc,2], param_MC[imc,3]*u.GeV)
+                                                                    param_MC[imc,0]*1e-5, param_MC[imc,2],
+                                                                    Ecut*u.GeV)
     
         spec_ic_mci = cluster.get_ic_spectrum(energy, Rmin=None, Rmax=cluster.R500,
                                               type_integral='cylindrical',
@@ -440,11 +452,12 @@ def model_leptonic(params, cluster, data):
     CR_X_E   = params[0]*1e-5
     CR_eta   = params[1]
     CR_index = params[2]
-    CR_Ec    = params[3]
-    
+    #Ecut    = params[3]
+    Ecut     = E_cut_ref 
+
     #--- Set parameters
     cluster = perseus_model_library.set_pure_leptonic_model(cluster, 
-                                                            ('density', CR_eta), CR_X_E, CR_index, CR_Ec*u.GeV)
+                                                            ('density', CR_eta), CR_X_E, CR_index, Ecut*u.GeV)
     
     #--- Profile
     r_synch, p_synch = cluster.get_synchrotron_profile(data['profile']['radius'], freq0=data['info']['prof_freq'])
@@ -682,11 +695,10 @@ def run_function_mcmc(cluster, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 10         # Number of Monte Carlo trials
+    Nmc         = 100         # Number of Monte Carlo trials
     fit_index   = False      # Fit the spectral index profile
-    mcmc_nsteps = 200         # number of MCMC points
-    mcmc_nsteps = 500         # number of MCMC points
-    mcmc_burnin = 0        # number of MCMC burnin points
+    mcmc_nsteps = 1000         # number of MCMC points
+    mcmc_burnin = 200        # number of MCMC burnin points
     mcmc_reset  = False      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     model_case  = 'Leptonic' # 'Hadronic' or 'Leptonic'
@@ -710,7 +722,8 @@ if __name__ == "__main__":
     elif model_case == 'Leptonic':
         cluster = perseus_model_library.default_model(directory=output_dir)
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
-        cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 2.0), 7e-7, -2.0, 0.23*u.GeV)
+        cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 2.0), 7e-7, -2.0,
+                                                                E_cut_ref*u.GeV)
     else:
         raise ValueError('Only Hadronic or Leptonic are possible')
     cluster.Npt_per_decade_integ = 10
@@ -729,11 +742,15 @@ if __name__ == "__main__":
         par_min    = [0,  0, 2]
         par_max    = [10, 3, 4]
     if model_case == 'Leptonic':
-        param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'E_{cut} (GeV)']
-        par0       = np.array([1, 1.0, 3.0, 1e9])
-        par_min    = [0,    0, 2, 9.9e8]
-        par_max    = [1e3,  3, 5, 1.1e9]
-
+        #param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'E_{cut} (GeV)']
+        #par0       = np.array([1, 1.0, 3.0, 1e9])
+        #par_min    = [0,    0, 2, 9.9e8]
+        #par_max    = [1e3,  3, 5, 1.1e9]
+        param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}']
+        par0       = np.array([100, 2.0, 3.0])
+        par_min    = [0,    0, 2]
+        par_max    = [1e3,  3, 5]
+        
     run_function_mcmc(cluster, par0, par_min, par_max,
                       mcmc_nsteps=mcmc_nsteps, nwalkers=10,
                       run_mcmc=run_mcmc, reset_mcmc=mcmc_reset,

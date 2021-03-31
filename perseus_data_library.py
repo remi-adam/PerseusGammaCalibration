@@ -17,7 +17,8 @@ from minot.model_tools import trapz_loglog
 
 def radio_profile_data(distance_correction):
     """
-    Get the radio profile data and output a dictionary
+    Get the radio profile data and output a dictionary.
+    This is taken from Gitti et al. 2002
     
     Parameters
     ----------
@@ -66,6 +67,50 @@ def radio_profile_data(distance_correction):
                  'error_m':prof_data1['error_m']*u.Jy/u.arcmin**2}
 
     return prof_data
+
+
+#==================================================
+# Get the profile data
+#==================================================
+
+def radio_profile_data2(kpcperarcmin):
+    """
+    Get the radio profile data and output a dictionary
+    This is taken from Pedlar et al. 1990
+    Assume 10% error
+
+    Parameters
+    ----------
+    
+    Outputs
+    ----------
+    - data (dict): a dictionary that contain the data
+    
+    """
+    
+    # Extracted from Pedlar's paper
+    dat_dir    = os.getenv('CTAPHYS_EDAT_DIR')+'Radio'
+    prof_file  = dat_dir+'/Perseus_radio_profile_Pedlar1990_1380MHz_beam42x41arcsec.txt'
+    prof_data11 = pd.read_csv(prof_file, header=None, skiprows=1, index_col=False,
+                              names=['radius', 'flux'])
+
+    beam = 1.0/(2*np.pi*(42.0*41.0/60**2/2.355**2)**2)
+
+    prof_data1 = {'radius' : prof_data11['radius'].values/60.0*kpcperarcmin,
+                  'flux'   : prof_data11['flux'].values*beam,
+                  'error'  : prof_data11['flux'].values*0.1*beam,
+                  'error_m': prof_data11['flux'].values*0.1*beam,
+                  'error_p': prof_data11['flux'].values*0.1*beam}
+    
+    # Combinaning the two
+    prof_data = {'radius':prof_data1['radius']*u.kpc,
+                 'flux':prof_data1['flux']*u.Jy/u.arcmin**2,    # central flux
+                 'error':prof_data1['error']*u.Jy/u.arcmin**2,   # Symmetrixed error
+                 'error_p':prof_data1['error_p']*u.Jy/u.arcmin**2,
+                 'error_m':prof_data1['error_m']*u.Jy/u.arcmin**2}
+
+    return prof_data
+
 
 
 #==================================================
@@ -173,7 +218,7 @@ def radio_consistency(radio_data, kpcperarcmin, check=True):
 # Get the radio data
 #==================================================
 
-def get_radio_data(cosmo, redshift):
+def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
     """
     Get the total radio data in one single dictionary
     
@@ -191,18 +236,33 @@ def get_radio_data(cosmo, redshift):
     kpcperarcmin = cosmo.kpc_proper_per_arcmin(redshift)
 
     # Information about the data
-    info = {'spec_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the flux is integrated
-            'spec_Rmax' : 15.0/2*u.arcmin*kpcperarcmin,  # Radius up to which the flux is integrated
-            'prof_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
-            'prof_Rmax' : 500*u.kpc*distance_correction, # Radius down to which the model ok (due to NGC1275)
-            'prof_freq' : 327*u.MHz,                     # Frequency at which the profile is extracted
-            'idx_freq1' : 327*u.MHz,                     # Start frequency for spectral index calculation
-            'idx_freq2' : 609*u.MHz,                     # End frequency for spectral index calculation      
-            'idx_Rmin'  : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
-            'idx_Rmax'  : 500*u.kpc*distance_correction} # Radius down to which the model ok (due to NGC1275)
+    if prof_file == 'Gitti2002':
+        info = {'spec_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the flux is integrated
+                'spec_Rmax' : 15.0/2*u.arcmin*kpcperarcmin,  # Radius up to which the flux is integrated
+                'prof_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
+                'prof_Rmax' : 500*u.kpc*distance_correction, # Radius down to which the model ok (due to NGC1275)
+                'prof_freq' : 327*u.MHz,                     # Frequency at which the profile is extracted
+                'idx_freq1' : 327*u.MHz,                     # Start frequency for spectral index calculation
+                'idx_freq2' : 609*u.MHz,                     # End frequency for spectral index calculation      
+                'idx_Rmin'  : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
+                'idx_Rmax'  : 500*u.kpc*distance_correction} # Radius down to which the model ok (due to NGC1275)
+    if prof_file == 'Pedlar1990':        
+        info = {'spec_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the flux is integrated
+                'spec_Rmax' : 15.0/2*u.arcmin*kpcperarcmin,  # Radius up to which the flux is integrated
+                'prof_Rmin' : 23*u.kpc,                      # Radius down to which the model ok (due to NGC1275)
+                'prof_Rmax' : 80*u.kpc,                      # Radius down to which the model ok (due to NGC1275)
+                'prof_freq' : 1380*u.MHz,                    # Frequency at which the profile is extracted
+                'idx_freq1' : 327*u.MHz,                     # Start frequency for spectral index calculation
+                'idx_freq2' : 609*u.MHz,                     # End frequency for spectral index calculation      
+                'idx_Rmin'  : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
+                'idx_Rmax'  : 500*u.kpc*distance_correction} # Radius down to which the model ok (due to NGC1275)
 
     # Data
-    prof_data = radio_profile_data(distance_correction)
+    if prof_file == 'Gitti2002':
+        prof_data = radio_profile_data(distance_correction)
+    if prof_file == 'Pedlar1990':        
+        prof_data = radio_profile_data2(kpcperarcmin)
+
     spec_data = radio_spectrum_data()
     idx_data  = radio_index_data(distance_correction)
     
