@@ -684,15 +684,12 @@ if __name__ == "__main__":
     #========== Parameters
     Nmc         = 10         # Number of Monte Carlo trials
     fit_index   = False      # Fit the spectral index profile
-<<<<<<< HEAD
     mcmc_nsteps = 200         # number of MCMC points
-=======
     mcmc_nsteps = 500         # number of MCMC points
->>>>>>> cdba3684399e45f7ca714a686ae8d81b6d245d0d
     mcmc_burnin = 0        # number of MCMC burnin points
     mcmc_reset  = False      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
-    model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
+    model_case  = 'Leptonic' # 'Hadronic' or 'Leptonic'
     output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
     #output_dir = '/Users/adam/Desktop/'+model_case
     
