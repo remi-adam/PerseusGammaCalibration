@@ -185,7 +185,8 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
              [0,1e6], linestyle='--', color='grey')
     plt.fill_between([0,radio_data['info']['prof_Rmin'].to_value('kpc')], [0,0], [1e6,1e6],
                      color='grey', alpha=0.2, label='Excluded region')
-    plt.fill_between([radio_data['info']['prof_Rmax'].to_value('kpc'), np.inf], [0,0], [1e6,1e6],
+    plt.fill_between([radio_data['info']['prof_Rmax'].to_value('kpc'),
+                      radio_data['info']['prof_Rmax'].to_value('kpc')*1e6], [0,0], [1e6,1e6],
                      color='grey', alpha=0.2)
     plt.xscale('log')
     plt.yscale('log')
@@ -697,13 +698,14 @@ if __name__ == "__main__":
     #========== Parameters
     Nmc         = 100         # Number of Monte Carlo trials
     fit_index   = False      # Fit the spectral index profile
-    mcmc_nsteps = 1000         # number of MCMC points
-    mcmc_burnin = 200        # number of MCMC burnin points
-    mcmc_reset  = False      # Reset the MCMC
+    mcmc_nsteps = 1000       # number of MCMC points
+    mcmc_burnin = 0        # number of MCMC burnin points
+    mcmc_reset  = True      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
-    model_case  = 'Leptonic' # 'Hadronic' or 'Leptonic'
-    output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
-    #output_dir = '/Users/adam/Desktop/'+model_case
+    basedata    = 'Pedlar1990'
+    model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
+    #output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
+    output_dir  = '/Users/adam/Desktop/'+model_case
     
     #========== Information
     print('========================================')
@@ -731,7 +733,7 @@ if __name__ == "__main__":
     #========== Data
     print('')
     print('-----> Getting the radio data')
-    radio_data = perseus_data_library.get_radio_data(cluster.cosmo, cluster.redshift)
+    radio_data = perseus_data_library.get_radio_data(cluster.cosmo, cluster.redshift, prof_file=basedata)
     
     #========== MCMC fit
     print('')
@@ -747,7 +749,8 @@ if __name__ == "__main__":
         #par_min    = [0,    0, 2, 9.9e8]
         #par_max    = [1e3,  3, 5, 1.1e9]
         param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}']
-        par0       = np.array([100, 2.0, 3.0])
+        #par0       = np.array([100, 2.0, 3.0])
+        par0       = np.array([1000, 0.75, 3.0])
         par_min    = [0,    0, 2]
         par_max    = [1e3,  3, 5]
         
