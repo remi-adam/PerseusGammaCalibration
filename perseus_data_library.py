@@ -94,13 +94,14 @@ def radio_profile_data2(kpcperarcmin):
     prof_data11 = pd.read_csv(prof_file, header=None, skiprows=1, index_col=False,
                               names=['radius', 'flux'])
 
-    beam = 1.0/(2*np.pi*(42.0*41.0/60**2/2.355**2)**2)
+    sigma = np.sqrt(41*42/60**2)/2.355 # arcmin
+    beam = 2*np.pi*sigma**2 # arcmin2/beam
 
     prof_data1 = {'radius' : prof_data11['radius'].values/60.0*kpcperarcmin,
-                  'flux'   : prof_data11['flux'].values*beam,
-                  'error'  : prof_data11['flux'].values*0.1*beam,
-                  'error_m': prof_data11['flux'].values*0.1*beam,
-                  'error_p': prof_data11['flux'].values*0.1*beam}
+                  'flux'   : prof_data11['flux'].values/beam,
+                  'error'  : prof_data11['flux'].values*0.1/beam,
+                  'error_m': prof_data11['flux'].values*0.1/beam,
+                  'error_p': prof_data11['flux'].values*0.1/beam}
     
     # Combinaning the two
     prof_data = {'radius':prof_data1['radius']*u.kpc,
@@ -169,7 +170,7 @@ def radio_index_data(distance_correction):
 # Check the radio data consistency
 #==================================================
 
-def radio_consistency(radio_data, kpcperarcmin, check=True):
+def radio_consistency(radio_data, kpcperarcmin, wspec, check=True):
     """
     Check the radio data consistency between profile
     and spectrum
@@ -196,7 +197,7 @@ def radio_consistency(radio_data, kpcperarcmin, check=True):
 
     # Compute the flux expected from the profile
     flux_from_profile = trapz_loglog(2*np.pi*t_itpl*p_itpl, t_itpl)*u.Jy
-    flux_correction_factor = flux_from_profile/radio_data['spectrum']['flux'][0]
+    flux_correction_factor = flux_from_profile/radio_data['spectrum']['flux'][wspec]
     
     # Check the interpolation
     if check:
@@ -208,7 +209,7 @@ def radio_consistency(radio_data, kpcperarcmin, check=True):
         plt.ylabel('Surface brightness (Jy arcmin-2)')
         print('Flux from profile:', flux_from_profile)
         print('Flux from spectrum:', radio_data['info']['prof_freq'],
-              radio_data['spectrum']['freq'][0], radio_data['spectrum']['flux'][0])
+              radio_data['spectrum']['freq'][wspec], radio_data['spectrum']['flux'][wspec])
         print('flux correcction (to be applied to profile)', flux_correction_factor)
 
     return flux_correction_factor
@@ -234,10 +235,10 @@ def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
     # Cosmology
     distance_correction = 50.0/cosmo.H0.to_value('km s-1 Mpc-1')
     kpcperarcmin = cosmo.kpc_proper_per_arcmin(redshift)
-
+    
     # Information about the data
     if prof_file == 'Gitti2002':
-        info = {'spec_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the flux is integrated
+        info = {'spec_Rmin' : 1*u.kpc,                       # Radius down to which the flux is integrated
                 'spec_Rmax' : 15.0/2*u.arcmin*kpcperarcmin,  # Radius up to which the flux is integrated
                 'prof_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
                 'prof_Rmax' : 500*u.kpc*distance_correction, # Radius down to which the model ok (due to NGC1275)
@@ -246,8 +247,8 @@ def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
                 'idx_freq2' : 609*u.MHz,                     # End frequency for spectral index calculation      
                 'idx_Rmin'  : 30*u.kpc*distance_correction,  # Radius down to which the model ok (due to NGC1275)
                 'idx_Rmax'  : 500*u.kpc*distance_correction} # Radius down to which the model ok (due to NGC1275)
-    if prof_file == 'Pedlar1990':        
-        info = {'spec_Rmin' : 30*u.kpc*distance_correction,  # Radius down to which the flux is integrated
+    if prof_file == 'Pedlar1990':
+        info = {'spec_Rmin' : 1.0*u.kpc,                     # Radius down to which the flux is integrated
                 'spec_Rmax' : 15.0/2*u.arcmin*kpcperarcmin,  # Radius up to which the flux is integrated
                 'prof_Rmin' : 23*u.kpc,                      # Radius down to which the model ok (due to NGC1275)
                 'prof_Rmax' : 80*u.kpc,                      # Radius down to which the model ok (due to NGC1275)
@@ -261,7 +262,7 @@ def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
     if prof_file == 'Gitti2002':
         prof_data = radio_profile_data(distance_correction)
     if prof_file == 'Pedlar1990':        
-        prof_data = radio_profile_data2(kpcperarcmin)
+        prof_data = radio_profile_data2(kpcperarcmin.value)
 
     spec_data = radio_spectrum_data()
     idx_data  = radio_index_data(distance_correction)
@@ -272,11 +273,17 @@ def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
                   'index':    idx_data}
 
     # Profile - spectrum cross calibration
-    flux_correction = radio_consistency(radio_data, kpcperarcmin, check=True)
+    if prof_file == 'Gitti2002': wspec = 0
+    if prof_file == 'Pedlar1990': wspec = 2
+    flux_correction = radio_consistency(radio_data, kpcperarcmin, wspec=wspec, check=True)
+    print(flux_correction)
+    if prof_file == 'Gitti2002':
+        print('---> Apply flux correction for Gitti 2002 data')
+        radio_data['profile']['flux'] = radio_data['profile']['flux']/flux_correction
+        radio_data['profile']['error'] = radio_data['profile']['error']/flux_correction
+        radio_data['profile']['error_p'] = radio_data['profile']['error_p']/flux_correction
+        radio_data['profile']['error_m'] = radio_data['profile']['error_m']/flux_correction
+    if prof_file == 'Pedlar1990': 
+        print('---> Check spectrum/profile consistency for Pedlar 1990 data, but no correction.')
 
-    radio_data['profile']['flux'] = radio_data['profile']['flux']/flux_correction
-    radio_data['profile']['error'] = radio_data['profile']['error']/flux_correction
-    radio_data['profile']['error_p'] = radio_data['profile']['error_p']/flux_correction
-    radio_data['profile']['error_m'] = radio_data['profile']['error_m']/flux_correction
-    
     return radio_data
