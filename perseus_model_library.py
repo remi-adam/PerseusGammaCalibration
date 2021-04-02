@@ -251,9 +251,9 @@ def set_pure_hadronic_model(cluster_in, scaling, Xcrp, slope):
 # Set the pure leptonic CR model to the cluster
 #==================================================
 
-def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
+def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope):
     """
-    Set the CR to pure leptonic model
+    Set the CR to pure leptonic model: power law injection + steady losses
     
     Parameters
     ----------
@@ -276,9 +276,9 @@ def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
     cluster_out.X_crp_E  = {'X':0.00, 'R_norm':cluster_out.R500}
     
     cluster_out.X_cre1_E = {'X':Xcre1, 'R_norm':cluster_out.R500}
-    cluster_out.spectrum_cre1_model = {'name': 'ExponentialCutoffPowerLaw',
-                                       'Index': slope, 'CutoffEnergy':Ecut}
-    cluster_out.cre1_loss_model = 'None'
+    cluster_out.spectrum_cre1_model = {'name': 'PowerLaw',
+                                       'Index': slope}
+    cluster_out.cre1_loss_model = 'Steady'
     
     radius = np.logspace(0,4,1000)*u.kpc
 
