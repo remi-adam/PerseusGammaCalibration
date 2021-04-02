@@ -698,14 +698,14 @@ if __name__ == "__main__":
     #========== Parameters
     Nmc         = 100         # Number of Monte Carlo trials
     fit_index   = False      # Fit the spectral index profile
-    mcmc_nsteps = 1000       # number of MCMC points
+    mcmc_nsteps = 100       # number of MCMC points
     mcmc_burnin = 0        # number of MCMC burnin points
-    mcmc_reset  = True      # Reset the MCMC
+    mcmc_reset  = False      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     basedata    = 'Pedlar1990'
     model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
-    #output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
-    output_dir  = '/Users/adam/Desktop/'+model_case
+    output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
+    #output_dir  = '/Users/adam/Desktop/'+model_case
     
     #========== Information
     print('========================================')
