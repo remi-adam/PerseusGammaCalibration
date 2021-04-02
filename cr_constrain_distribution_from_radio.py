@@ -817,7 +817,7 @@ if __name__ == "__main__":
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
         cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 1.0), 1e-5, 2.0)
         if app_steady: cluster.cre1_loss_model = 'Steady'
-        cluster.Npt_per_decade_integ = 10
+        cluster.Npt_per_decade_integ = 30
     else:
         raise ValueError('Only Hadronic or Leptonic are possible')
     
