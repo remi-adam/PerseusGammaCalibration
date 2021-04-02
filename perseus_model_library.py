@@ -278,6 +278,7 @@ def set_pure_leptonic_model(cluster_in, scaling, Xcre1, slope, Ecut):
     cluster_out.X_cre1_E = {'X':Xcre1, 'R_norm':cluster_out.R500}
     cluster_out.spectrum_cre1_model = {'name': 'ExponentialCutoffPowerLaw',
                                        'Index': slope, 'CutoffEnergy':Ecut}
+    cluster_out.cre1_loss_model = 'None'
     
     radius = np.logspace(0,4,1000)*u.kpc
 
