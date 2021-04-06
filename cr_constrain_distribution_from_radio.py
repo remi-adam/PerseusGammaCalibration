@@ -190,8 +190,12 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.yscale('log')
     plt.xlabel('radius (kpc)')
     plt.ylabel('surface brightness (Jy/arcmin$^2$)')
-    plt.xlim(10,250)
-    plt.ylim(1e-3,1e1)
+    if == 'Gitti2002':
+        plt.xlim(10,250)
+        plt.ylim(1e-3,1e1)
+    if == 'Pedlar1990':
+        plt.xlim(10,100)
+        plt.ylim(5e-3,5e-1)
     plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_profile.pdf')
     plt.close()
     
