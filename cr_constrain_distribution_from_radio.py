@@ -190,10 +190,10 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.yscale('log')
     plt.xlabel('radius (kpc)')
     plt.ylabel('surface brightness (Jy/arcmin$^2$)')
-    if == 'Gitti2002':
+    if basedata == 'Gitti2002':
         plt.xlim(10,250)
         plt.ylim(1e-3,1e1)
-    if == 'Pedlar1990':
+    if basedata == 'Pedlar1990':
         plt.xlim(10,100)
         plt.ylim(5e-3,5e-1)
     plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_profile.pdf')
@@ -788,18 +788,18 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 100       # Number of Monte Carlo trials
+    Nmc         = 10       # Number of Monte Carlo trials
     fit_index   = False     # Fit the spectral index profile
     app_steady  = True      # Application of steady state losses
-    mcmc_nsteps = 1300       # number of MCMC points
-    mcmc_burnin = 300         # number of MCMC burnin points
+    mcmc_nsteps = 10       # number of MCMC points
+    mcmc_burnin = 0         # number of MCMC burnin points
     mcmc_reset  = True      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     basedata    = 'Pedlar1990'
     #basedata    = 'Gitti2002'
     model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
-    output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
-    #output_dir  = '/Users/adam/Desktop/'+model_case+'_'+basedata
+    #output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
+    output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'+model_case+'_'+basedata
     
     #========== Information
     print('========================================')
@@ -815,7 +815,7 @@ if __name__ == "__main__":
         cluster = perseus_model_library.default_model(directory=output_dir)
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
         cluster = perseus_model_library.set_pure_hadronic_model(cluster, ('density', 1.0), 1e-2, 2.5)
-        cluster.Npt_per_decade_integ = 10
+        cluster.Npt_per_decade_integ = 7
     elif model_case == 'Leptonic':
         cluster = perseus_model_library.default_model(directory=output_dir)
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
