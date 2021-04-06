@@ -219,7 +219,7 @@ def radio_consistency(radio_data, kpcperarcmin, wspec, check=True):
 # Get the radio data
 #==================================================
 
-def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
+def get_radio_data(cosmo, redshift, prof_file='Gitti2002', check=True):
     """
     Get the total radio data in one single dictionary
     
@@ -275,7 +275,7 @@ def get_radio_data(cosmo, redshift, prof_file='Gitti2002'):
     # Profile - spectrum cross calibration
     if prof_file == 'Gitti2002': wspec = 0
     if prof_file == 'Pedlar1990': wspec = 2
-    flux_correction = radio_consistency(radio_data, kpcperarcmin, wspec=wspec, check=True)
+    flux_correction = radio_consistency(radio_data, kpcperarcmin, wspec=wspec, check=check)
     print(flux_correction)
     if prof_file == 'Gitti2002':
         print('---> Apply flux correction for Gitti 2002 data')
