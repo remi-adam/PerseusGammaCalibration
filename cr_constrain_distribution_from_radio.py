@@ -787,15 +787,15 @@ if __name__ == "__main__":
     Nmc         = 100       # Number of Monte Carlo trials
     fit_index   = False     # Fit the spectral index profile
     app_steady  = True      # Application of steady state losses
-    mcmc_nsteps = 600       # number of MCMC points
-    mcmc_burnin = 0         # number of MCMC burnin points
+    mcmc_nsteps = 1300       # number of MCMC points
+    mcmc_burnin = 300         # number of MCMC burnin points
     mcmc_reset  = True      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     basedata    = 'Pedlar1990'
     #basedata    = 'Gitti2002'
-    model_case  = 'Leptonic' # 'Hadronic' or 'Leptonic'
-    #output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case
-    output_dir  = '/Users/adam/Desktop/'+model_case
+    model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
+    output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
+    #output_dir  = '/Users/adam/Desktop/'+model_case+'_'+basedata
     
     #========== Information
     print('========================================')
