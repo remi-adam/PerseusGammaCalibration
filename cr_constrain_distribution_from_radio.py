@@ -31,6 +31,20 @@ from kesacco.Tools.plotting import seaborn_corner
 from kesacco.Tools import mcmc_common
 import minot
 
+dict_base = {'font.size':        16,
+             'legend.fontsize':  16,
+             'xtick.labelsize':  16,
+             'ytick.labelsize':  16,
+             'axes.labelsize':   16,
+             'axes.titlesize':   16,
+             'figure.titlesize': 16,    
+             'figure.figsize':[8.0, 6.0],
+             'figure.subplot.right':0.97,
+             'figure.subplot.left':0.15,
+             'font.family':'serif',
+             'figure.facecolor': 'white',
+             'legend.frameon': True}
+plt.rcParams.update(dict_base)
 
 #========================================
 # MCMC post analysys
@@ -788,12 +802,12 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 10       # Number of Monte Carlo trials
+    Nmc         = 100       # Number of Monte Carlo trials
     fit_index   = False     # Fit the spectral index profile
     app_steady  = True      # Application of steady state losses
-    mcmc_nsteps = 10       # number of MCMC points
-    mcmc_burnin = 0         # number of MCMC burnin points
-    mcmc_reset  = True      # Reset the MCMC
+    mcmc_nsteps = 40       # number of MCMC points
+    mcmc_burnin = 50         # number of MCMC burnin points
+    mcmc_reset  = False      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     basedata    = 'Pedlar1990'
     #basedata    = 'Gitti2002'
