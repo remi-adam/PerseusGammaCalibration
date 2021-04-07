@@ -857,7 +857,7 @@ if __name__ == "__main__":
     basedata    = 'Pedlar1990'
     #basedata    = 'Gitti2002'
     model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
-    #output_dir = '/sps/hep/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
+    #output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
     output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'+model_case+'_'+basedata
     
     #========== Information
