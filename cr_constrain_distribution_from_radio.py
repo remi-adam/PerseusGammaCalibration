@@ -214,42 +214,43 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.close()
     
     #----- Spectral index
-    fig = plt.figure(0, figsize=(8, 6))
-    # MC
-    for imc in range(Nmc):
-        plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_mc[imc], color='blue', alpha=0.05)
+    if fit_index:
+        fig = plt.figure(0, figsize=(8, 6))
+        # MC
+        for imc in range(Nmc):
+            plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_mc[imc], color='blue', alpha=0.05)
+            
+        # Limits
+        plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_u, color='blue',
+                 linewidth=2, linestyle='--', label=str(conf)+'% C.L.')
+        plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_d, color='blue',
+                 linewidth=2, linestyle='--')
+        plt.fill_between(radio_data['index']['radius'].to_value('kpc'), idx_d, idx_u,
+                         color='blue', alpha=0.2)
         
-    # Limits
-    plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_u, color='blue',
-             linewidth=2, linestyle='--', label=str(conf)+'% C.L.')
-    plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_d, color='blue',
-             linewidth=2, linestyle='--')
-    plt.fill_between(radio_data['index']['radius'].to_value('kpc'), idx_d, idx_u,
-                     color='blue', alpha=0.2)
-    
-    # Best and data    
-    plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_best, color='blue',
-             linewidth=3, label='Best-fit')
-    plt.errorbar(radio_data['index']['radius'].to_value('kpc'), radio_data['index']['idx'],
-                 yerr=radio_data['index']['error'],
-                 marker='o', linestyle='', color='red', label='Data')
-    
-    plt.plot([radio_data['info']['idx_Rmin'].to_value('kpc'),radio_data['info']['idx_Rmin'].to_value('kpc')],
-             [0,1e6], linestyle='--', color='grey')
-    plt.plot([radio_data['info']['idx_Rmax'].to_value('kpc'),radio_data['info']['idx_Rmax'].to_value('kpc')],
-             [0,1e6], linestyle='--', color='grey')
-    plt.fill_between([0,radio_data['info']['idx_Rmin'].to_value('kpc')], [0,0], [1e6,1e6], color='grey',
-                     alpha=0.1, label='Excluded region')
-    plt.fill_between([radio_data['info']['idx_Rmax'].to_value('kpc'), np.inf], [0,0], [1e6,1e6],
-                     color='grey', alpha=0.1)
-    plt.xscale('log')
-    plt.yscale('linear')
-    plt.xlabel('radius (kpc)')
-    plt.ylabel('spectral index')
-    plt.xlim(10,250)
-    plt.ylim(0.5,2.5)
-    plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_index.pdf')
-    plt.close()
+        # Best and data    
+        plt.plot(radio_data['index']['radius'].to_value('kpc'), idx_best, color='blue',
+                 linewidth=3, label='Best-fit')
+        plt.errorbar(radio_data['index']['radius'].to_value('kpc'), radio_data['index']['idx'],
+                     yerr=radio_data['index']['error'],
+                     marker='o', linestyle='', color='red', label='Data')
+        
+        plt.plot([radio_data['info']['idx_Rmin'].to_value('kpc'),radio_data['info']['idx_Rmin'].to_value('kpc')],
+                 [0,1e6], linestyle='--', color='grey')
+        plt.plot([radio_data['info']['idx_Rmax'].to_value('kpc'),radio_data['info']['idx_Rmax'].to_value('kpc')],
+                 [0,1e6], linestyle='--', color='grey')
+        plt.fill_between([0,radio_data['info']['idx_Rmin'].to_value('kpc')], [0,0], [1e6,1e6], color='grey',
+                         alpha=0.1, label='Excluded region')
+        plt.fill_between([radio_data['info']['idx_Rmax'].to_value('kpc'), np.inf], [0,0], [1e6,1e6],
+                         color='grey', alpha=0.1)
+        plt.xscale('log')
+        plt.yscale('linear')
+        plt.xlabel('radius (kpc)')
+        plt.ylabel('spectral index')
+        plt.xlim(10,250)
+        plt.ylim(0.5,2.5)
+        plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_index.pdf')
+        plt.close()
     
     #========== Implication for gamma rays
     energy = np.logspace(-2,6,100)*u.GeV
@@ -479,11 +480,14 @@ def model_leptonic(params, cluster, data):
     s_synch = s_synch[1:]
     
     #--- Spectral index
-    p_synch1 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq1'])[1]
-    p_synch2 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq2'])[1]
-    upper = np.log10((p_synch1/p_synch2).to_value(''))
-    lower = np.log10((data['info']['idx_freq1']/data['info']['idx_freq2']).to_value(''))
-    i_synch  = -upper / lower
+    if fit_index:
+        p_synch1 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq1'])[1]
+        p_synch2 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq2'])[1]
+        upper = np.log10((p_synch1/p_synch2).to_value(''))
+        lower = np.log10((data['info']['idx_freq1']/data['info']['idx_freq2']).to_value(''))
+        i_synch  = -upper / lower
+    else:
+        i_synch = np.nan
         
     return Norm*p_synch, s_synch, i_synch
 
@@ -530,11 +534,14 @@ def model_hadronic(params, cluster, data):
     s_synch = s_synch[1:]
     
     #--- Spectral index
-    p_synch1 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq1'])[1]
-    p_synch2 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq2'])[1]
-    upper = np.log10((p_synch1/p_synch2).to_value(''))
-    lower = np.log10((data['info']['idx_freq1']/data['info']['idx_freq2']).to_value(''))
-    i_synch  = -upper/lower
+    if fit_index:
+        p_synch1 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq1'])[1]
+        p_synch2 = cluster.get_synchrotron_profile(data['index']['radius'], freq0=data['info']['idx_freq2'])[1]
+        upper = np.log10((p_synch1/p_synch2).to_value(''))
+        lower = np.log10((data['info']['idx_freq1']/data['info']['idx_freq2']).to_value(''))
+        i_synch  = -upper/lower
+    else:
+        i_synch = np.nan
     
     return Norm*p_synch, s_synch, i_synch
 
@@ -568,11 +575,41 @@ def lnprior(params, par_min, par_max):
     return prior
 
 
+#==================================================
+# MCMC: Defines log gaussian prior
+#==================================================
+
+def lngprior(params, par_gprior):
+    '''
+    Return the gaussian prior on parameters
+
+    Parameters
+    ----------
+    - params (list): the parameters
+    - par_gprior (list): the mean and sigma value for params
+
+    Output
+    ------
+    - prior (float): the value of the prior
+
+    '''
+    
+    prior = 0.0
+    
+    for i in range(len(params)):
+        if par_gprior[1][i] != np.inf:
+            norm = np.log(1.0/(np.sqrt(2*np.pi)*par_gprior[1][i]))
+            prior += norm - 0.5*(params[i]-par_gprior[0][i])**2 / par_gprior[1][i]**2
+
+    return prior
+
+
 #========================================
 # Hadronic log likelihood function
 #========================================
 
-def lnlike(params, cluster, data, par_min, par_max, fit_index=False, model_case='Hadronic'):
+def lnlike(params, cluster, data, par_min, par_max, par_gprior,
+           fit_index=False, model_case='Hadronic'):
     '''
     log likelihood function
 
@@ -586,7 +623,7 @@ def lnlike(params, cluster, data, par_min, par_max, fit_index=False, model_case=
     - log likelihood value
     '''
     
-    #--- Priors
+    #--- Flat priors
     prior = lnprior(params, par_min, par_max)
     if prior == -np.inf: # Should not go for the model if prior out
         return -np.inf
@@ -594,14 +631,17 @@ def lnlike(params, cluster, data, par_min, par_max, fit_index=False, model_case=
         return -np.inf
     if np.isnan(prior):
         return -np.inf
+
+    #--- Gaussian priors
+    gprior = lngprior(params, par_gprior)
     
+    #--- Model
     if model_case == 'Hadronic':
         prof_mod, spec_mod, idx_mod = model_hadronic(params, cluster, data)
-    elif model_case == 'Leptonic':
+    if model_case == 'Leptonic':
         prof_mod, spec_mod, idx_mod = model_leptonic(params, cluster, data)
-    else:
-        raise ValueError('Only Hadronic or Leptonic models are possible')
-    
+
+    #--- Chi2
     # Profile chi2
     wgood1 = (data['profile']['radius']>data['info']['prof_Rmin'])
     wgood2 = (data['profile']['radius']<data['info']['prof_Rmax'])
@@ -614,24 +654,27 @@ def lnlike(params, cluster, data, par_min, par_max, fit_index=False, model_case=
     spec_chi2 = spec_resid/data['spectrum']['error'].to_value('Jy')**2
     
     # Spectral index chi2
-    wgood1 = (data['index']['radius']>data['info']['idx_Rmin'])
-    wgood2 = (data['index']['radius']<data['info']['idx_Rmax'])
-    wgood = wgood1 * wgood2
-    idx_chi2 = ((data['index']['idx'][wgood]-idx_mod[wgood])**2)/data['index']['error'][wgood]**2
-    
+    if fit_index:
+        wgood1 = (data['index']['radius']>data['info']['idx_Rmin'])
+        wgood2 = (data['index']['radius']<data['info']['idx_Rmax'])
+        wgood = wgood1 * wgood2
+        idx_chi2 = ((data['index']['idx'][wgood]-idx_mod[wgood])**2)/data['index']['error'][wgood]**2
+    else:
+        idx_chi2 = np.nan
+        
     # Chi2 tot
     chi2_tot = -0.5*np.nansum(prof_chi2) - 0.5*np.nansum(spec_chi2)
     if fit_index: 
         chi2_tot = chi2_tot - 0.5*np.nansum(idx_chi2)
-        
-    return chi2_tot
+
+    return chi2_tot + gprior
 
 
 #========================================
 # Run the MCMC
 #========================================
 
-def run_function_mcmc(cluster, radio_data, par0, par_min, par_max,
+def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
                       mcmc_nsteps=1000, nwalkers=10,
                       run_mcmc=True, reset_mcmc=False,
                       fit_index=False, model_case='Hadronic'):
@@ -677,7 +720,8 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max,
             sampler.reset()
             pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
             sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                            args=[cluster, radio_data, par_min, par_max, fit_index, model_case],
+                                            args=[cluster, radio_data, par_min, par_max, par_gprior,
+                                                  fit_index, model_case],
                                             pool=Pool(cpu_count()))
         else:
             print('    Start from already existing sampler')
@@ -686,7 +730,8 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max,
         print('    No pre-existing sampler, start from scratch')
         pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
         sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                        args=[cluster, radio_data, par_min, par_max, fit_index, model_case],
+                                        args=[cluster, radio_data, par_min, par_max, par_gprior,
+                                              fit_index, model_case],
                                         pool=Pool(cpu_count()))
     
     #----- Run the MCMC
@@ -783,7 +828,7 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
         wgood = np.append(wgood, wgood4*wgood5)
         sigma = np.zeros(Np+Ns+Ni)+1e10
     sigma[wgood] = 1
-
+    
     # fit
     p_opt, p_cov = curve_fit(fitfunc, xdata, ydata,
                              p0=par0, sigma=sigma, absolute_sigma=False,
@@ -805,9 +850,9 @@ if __name__ == "__main__":
     Nmc         = 100       # Number of Monte Carlo trials
     fit_index   = False     # Fit the spectral index profile
     app_steady  = True      # Application of steady state losses
-    mcmc_nsteps = 40       # number of MCMC points
-    mcmc_burnin = 50         # number of MCMC burnin points
-    mcmc_reset  = False      # Reset the MCMC
+    mcmc_nsteps = 3100      # number of MCMC points
+    mcmc_burnin = 100       # number of MCMC burnin points
+    mcmc_reset  = True      # Reset the MCMC
     run_mcmc    = True      # Run the MCMC
     basedata    = 'Pedlar1990'
     #basedata    = 'Gitti2002'
@@ -849,25 +894,29 @@ if __name__ == "__main__":
     print('-----> Get guess parameter with curvefit')
     if model_case == 'Hadronic':
         param_name = ['X_{CRp} (x10^{-2})', '\\eta_{CRp}', '\\alpha_{CRp}', 'Norm']
-        par0       = np.array([1.0, 1.0, 2.5, 1.0])
-        par_min    = [0,  0, 2, 0.5]
-        par_max    = [10, 5, 4, 1.5]
+        par0       = [1.0,     1.0,    2.5,    1.0]
+        par_min    = [0,       0,      2,      0.5]
+        par_max    = [50,      5,      4,      1.5]
+        par_gprior = ([1.0,    1.0,    2.5,    1.0],
+                      [np.inf, np.inf, np.inf, 0.1])
     if model_case == 'Leptonic':
         param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'Norm']
-        par0       = np.array([1.0, 1.0, 2.0, 1.0])
-        par_min    = [0,   0, 2, 0.5]
-        par_max    = [1e4, 5, 5, 1.5]
-
+        par0       = [1.0,     1.0,    2.0,    1.0]
+        par_min    = [0,       0,      2,      0.5]
+        par_max    = [1e4,     5,      5,      1.5]
+        par_gprior = ([1.0,    1.0,    2.5,    1.0],
+                      [np.inf, np.inf, np.inf, 0.1])
+        
     if mcmc_reset and run_mcmc:
-        par_opt = run_curvefit(cluster, radio_data, par0, par_min, par_max,
+        par_opt = run_curvefit(cluster, radio_data, np.array(par0), par_min, par_max,
                                fit_index=fit_index, model_case=model_case)
     else:
-        par_opt = par0 # this is not used in this case, but just to give something
+        par_opt = np.array(par0) # this is not used in this case, but just to give something
     
     #========== MCMC fit
     print('')
     print('-----> Going for the MCMC fit')
-    run_function_mcmc(cluster, radio_data, par_opt, par_min, par_max,
+    run_function_mcmc(cluster, radio_data, par_opt, par_min, par_max, par_gprior,
                       mcmc_nsteps=mcmc_nsteps, nwalkers=10,
                       run_mcmc=run_mcmc, reset_mcmc=mcmc_reset,
                       fit_index=fit_index, model_case=model_case)
