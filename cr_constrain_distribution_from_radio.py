@@ -904,15 +904,15 @@ if __name__ == "__main__":
     Nmc         = 100              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 300              # number of MCMC points
+    mcmc_nsteps = 5100              # number of MCMC points
     mcmc_burnin = 100              # number of MCMC burnin points
     mcmc_reset  = True             # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
-    mag_case    = 'Bonafede2010low' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
-    #output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
-    output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
+    mag_case    = 'Bonafede2010up' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
+    output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
+    #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
     
     #========== Information
@@ -923,6 +923,7 @@ if __name__ == "__main__":
     #========== Make directory
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
+        print('-----> Working in '+output_dir)
     
     #========== Define the cluster model
     if model_case == 'Hadronic':
@@ -953,7 +954,7 @@ if __name__ == "__main__":
         par_min    = [0.0,     0.0,    2.0,    0.5]
         par_max    = [100,     5.0,    4.0,    1.5]
         par_gprior = ([0.0,    1.0,    2.5,    1.0],
-                      [0.1, np.inf, np.inf,    0.1])
+                      [10., np.inf, np.inf,    0.1])
     if model_case == 'Leptonic':
         param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'Norm']
         par0       = [1.0,     1.0,    2.0,    1.0]
