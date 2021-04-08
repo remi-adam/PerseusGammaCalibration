@@ -29,6 +29,7 @@ from PerseusGammaCalibration import perseus_model_library
 from PerseusGammaCalibration import perseus_data_library
 from kesacco.Tools.plotting import seaborn_corner
 from kesacco.Tools import mcmc_common
+from kesacco.Tools import plotting
 import minot
 
 dict_base = {'font.size':        16,
@@ -95,9 +96,10 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
         
     #========== Statistics results
     #----- Parameters
+    chainfname = cluster.output_dir+'/'+model_case+'_chainstat.txt'
     par_best, par_percentile = mcmc_common.chains_statistics(param_chains, lnL_chains,
                                                              parname=param_name, conf=conf, show=True,
-                                                             outfile=cluster.output_dir+'/'+model_case+'_chainstat.txt')
+                                                             outfile=chainfname)
     
     #----- Parameter space
     try:
@@ -208,7 +210,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
         plt.xlim(10,250)
         plt.ylim(1e-3,1e1)
     if basedata == 'Pedlar1990':
-        plt.xlim(10,100)
+        plt.xlim(13,100)
         plt.ylim(5e-3,5e-1)
     plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_profile.pdf')
     plt.close()
@@ -274,6 +276,9 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     r, dN_dSdtdO = cluster.get_gamma_profile(radius, 
                                              Emin=50*u.GeV, Emax=100*u.TeV, 
                                              Energy_density=False, Rmin_los=None, NR500_los=5.0)
+
+    fluxH = cluster.get_gamma_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+                                   Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
     
     # Inverse Compton
     E, dNIC_dEdSdt = cluster.get_ic_spectrum(energy, 
@@ -284,10 +289,14 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     r, dNIC_dSdtdO = cluster.get_ic_profile(radius, 
                                             Emin=50*u.GeV, Emax=100*u.TeV, 
                                             Energy_density=False, Rmin_los=None, NR500_los=5.0)
-    
+
+    fluxIC = cluster.get_ic_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+                                 Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
+
     #---------- Monte Carlo sampling: hadronic
     prof_g_mc = []
     spec_g_mc = []
+    flux_g_mc = []
     
     for imc in range(Nmc):
         if model_case == 'Hadronic':
@@ -304,8 +313,13 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     
         prof_g_mci = cluster.get_gamma_profile(radius, Emin=50*u.GeV, Emax=100*u.TeV, 
                                                Energy_density=False, Rmin_los=None, NR500_los=5.0)[1]
+
+        flux_g_mci = cluster.get_gamma_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+                                            Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
+    
         prof_g_mc.append(prof_g_mci)
         spec_g_mc.append(spec_g_mci)
+        flux_g_mc.append(flux_g_mci)
     
     #---------- Limits: hadronic
     dN_dEdSdt_u = np.percentile(np.array(spec_g_mc), 100-(100-conf)/2.0, axis=0)*spec_g_mc[0].unit
@@ -313,10 +327,14 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     
     dN_dSdtdO_u = np.percentile(np.array(prof_g_mc), 100-(100-conf)/2.0, axis=0)*prof_g_mc[0].unit
     dN_dSdtdO_d = np.percentile(np.array(prof_g_mc), (100-conf)/2.0, axis=0)*prof_g_mc[0].unit
+
+    fluxH_u = np.percentile(np.array(flux_g_mc), 100-(100-conf)/2.0)
+    fluxH_d = np.percentile(np.array(flux_g_mc), (100-conf)/2.0)
     
     #---------- Monte Carlo sampling: IC
     prof_ic_mc = []
     spec_ic_mc = []
+    flux_ic_mc = []
     
     for imc in range(Nmc):
         if model_case == 'Hadronic':
@@ -332,8 +350,13 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     
         prof_ic_mci = cluster.get_ic_profile(radius, Emin=50*u.GeV, Emax=100*u.TeV, 
                                              Energy_density=False, Rmin_los=None, NR500_los=5.0)[1]
+
+        flux_ic_mci = cluster.get_ic_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+                                          Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
+
         prof_ic_mc.append(prof_ic_mci)
         spec_ic_mc.append(spec_ic_mci)
+        flux_ic_mc.append(flux_ic_mci)
     
     #---------- Limits: IC
     dNIC_dEdSdt_u = np.percentile(np.array(spec_ic_mc), 100-(100-conf)/2.0, axis=0)*spec_ic_mc[0].unit
@@ -342,6 +365,9 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     dNIC_dSdtdO_u = np.percentile(np.array(prof_ic_mc), 100-(100-conf)/2.0, axis=0)*prof_ic_mc[0].unit
     dNIC_dSdtdO_d = np.percentile(np.array(prof_ic_mc), (100-conf)/2.0, axis=0)*prof_ic_mc[0].unit
 
+    fluxIC_u = np.percentile(np.array(flux_ic_mc), 100-(100-conf)/2.0)
+    fluxIC_d = np.percentile(np.array(flux_ic_mc), (100-conf)/2.0)
+    
     #========== Figure
     #----- Spectrum
     fig = plt.figure(0, figsize=(8, 6))
@@ -437,6 +463,34 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.savefig(cluster.output_dir+'/'+model_case+'_Gamma_profile.pdf')
     plt.close()
 
+    #----- Flux
+    file = open(cluster.output_dir+'/'+model_case+'_Gamma_flux.txt','w')
+    file.write('Hadronic        - Best  '+str(fluxH)+' cm-2 s-1 \n')
+    file.write('                  Upper '+str(fluxH_u)+' cm-2 s-1 \n')
+    file.write('                  Lower '+str(fluxH_d)+' cm-2 s-1 \n')
+    file.write('Inverse Compton - Best  '+str(fluxIC)+' cm-2 s-1 \n')
+    file.write('                  Upper '+str(fluxIC_u)+' cm-2 s-1 \n')
+    file.write('                  Lower '+str(fluxIC_d)+' cm-2 s-1 \n')
+    file.close()
+
+    plotting.seaborn_1d(np.array(flux_g_mc)*1e12,
+                        output_fig=cluster.output_dir+'/'+model_case+'_Gamma_flux_H.pdf',
+                        ci=0.68, truth=None, best=fluxH*1e12,
+                        label='$F_{\gamma,\ hadronic}$ ($10^{-12}$ s$^{-1}$ cm$^{-2}$)',
+                        gridsize=100, alpha=(0.2, 0.4), 
+                        figsize=(10,10), fontsize=12,
+                        cols=[('blue','grey', 'orange')])
+    plt.close("all")
+
+    plotting.seaborn_1d(np.array(flux_ic_mc)*1e12,
+                        output_fig=cluster.output_dir+'/'+model_case+'_Gamma_flux_IC.pdf',
+                        ci=0.68, truth=None, best=fluxIC*1e12,
+                        label='$F_{\gamma,\ IC}$ ($10^{-12}$ s$^{-1}$ cm$^{-2}$)',
+                        gridsize=100, alpha=(0.2, 0.4), 
+                        figsize=(10,10), fontsize=12,
+                        cols=[('blue','grey', 'orange')])
+    plt.close("all")
+    
 
 #========================================
 # Leptonic model
@@ -847,18 +901,19 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 100       # Number of Monte Carlo trials
-    fit_index   = False     # Fit the spectral index profile
-    app_steady  = True      # Application of steady state losses
-    mcmc_nsteps = 3100      # number of MCMC points
-    mcmc_burnin = 100       # number of MCMC burnin points
-    mcmc_reset  = True      # Reset the MCMC
-    run_mcmc    = True      # Run the MCMC
-    basedata    = 'Pedlar1990'
-    #basedata    = 'Gitti2002'
-    model_case  = 'Hadronic' # 'Hadronic' or 'Leptonic'
+    Nmc         = 100              # Number of Monte Carlo trials
+    fit_index   = False            # Fit the spectral index profile
+    app_steady  = True             # Application of steady state losses
+    mcmc_nsteps = 300              # number of MCMC points
+    mcmc_burnin = 100              # number of MCMC burnin points
+    mcmc_reset  = True             # Reset the MCMC
+    run_mcmc    = True             # Run the MCMC
+    basedata    = 'Pedlar1990'     # 'Gitti2002'
+    model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
+    mag_case    = 'Bonafede2010low' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
     #output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
-    output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'+model_case+'_'+basedata
+    output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
+    output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
     
     #========== Information
     print('========================================')
@@ -872,12 +927,12 @@ if __name__ == "__main__":
     #========== Define the cluster model
     if model_case == 'Hadronic':
         cluster = perseus_model_library.default_model(directory=output_dir)
-        cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
+        cluster = perseus_model_library.set_magnetic_field_model(cluster, case=mag_case)
         cluster = perseus_model_library.set_pure_hadronic_model(cluster, ('density', 1.0), 1e-2, 2.5)
-        cluster.Npt_per_decade_integ = 7
+        cluster.Npt_per_decade_integ = 10
     elif model_case == 'Leptonic':
         cluster = perseus_model_library.default_model(directory=output_dir)
-        cluster = perseus_model_library.set_magnetic_field_model(cluster, case='Taylor2006')
+        cluster = perseus_model_library.set_magnetic_field_model(cluster, case=mag_case)
         cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 1.0), 1e-5, 2.0)
         if app_steady: cluster.cre1_loss_model = 'Steady'
         cluster.Npt_per_decade_integ = 30
@@ -895,10 +950,10 @@ if __name__ == "__main__":
     if model_case == 'Hadronic':
         param_name = ['X_{CRp} (x10^{-2})', '\\eta_{CRp}', '\\alpha_{CRp}', 'Norm']
         par0       = [1.0,     1.0,    2.5,    1.0]
-        par_min    = [0,       0,      2,      0.5]
-        par_max    = [50,      5,      4,      1.5]
-        par_gprior = ([1.0,    1.0,    2.5,    1.0],
-                      [np.inf, np.inf, np.inf, 0.1])
+        par_min    = [0.0,     0.0,    2.0,    0.5]
+        par_max    = [100,     5.0,    4.0,    1.5]
+        par_gprior = ([0.0,    1.0,    2.5,    1.0],
+                      [0.1, np.inf, np.inf,    0.1])
     if model_case == 'Leptonic':
         param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'Norm']
         par0       = [1.0,     1.0,    2.0,    1.0]
