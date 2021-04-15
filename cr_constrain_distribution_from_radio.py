@@ -869,27 +869,34 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
                       radio_data['spectrum']['freq'].to_value('MHz'))
     ydata = np.append(radio_data['profile']['flux'].to_value('Jy arcmin-2'),
                       radio_data['spectrum']['flux'].to_value('Jy'))
-    wgood1 = (radio_data['profile']['radius']>radio_data['info']['prof_Rmin'])
-    wgood2 = (radio_data['profile']['radius']<radio_data['info']['prof_Rmax'])
-    wgood3 = (radio_data['spectrum']['freq'].to_value('MHz') > 0)
-    wgood = np.append(wgood1*wgood2, wgood3)
-    sigma = np.zeros(Np+Ns)+1e10
+    sigma = np.append(radio_data['profile']['error'].to_value('Jy arcmin-2'),
+                      radio_data['spectrum']['error'].to_value('Jy'))
+    #sigma = np.zeros(Np+Ns)+1.0
+    wbad1 = (radio_data['profile']['radius']<radio_data['info']['prof_Rmin'])
+    wbad2 = (radio_data['profile']['radius']>radio_data['info']['prof_Rmax'])
+    wbad3 = (radio_data['spectrum']['freq'].to_value('MHz') < 0)
+    wbad = np.append(wbad1*wbad2, wbad3)
     if fit_index:
         xdata = np.append(xdata, radio_data['index']['radius'].to_value('kpc'))
         ydata = np.append(ydata, radio_data['index']['idx'])
-        wgood4 = (radio_data['index']['radius']>radio_data['info']['idx_Rmin'])
-        wgood5 = (radio_data['index']['radius']<radio_data['info']['idx_Rmax'])
-        wgood = np.append(wgood, wgood4*wgood5)
-        sigma = np.zeros(Np+Ns+Ni)+1e10
-    sigma[wgood] = 1
+        sigma = np.append(sigma, radio_data['index']['error'])
+        #sigma = np.zeros(Np+Ns+Ni)+1.0
+        wbad4 = (radio_data['index']['radius']<radio_data['info']['idx_Rmin'])
+        wbad5 = (radio_data['index']['radius']>radio_data['info']['idx_Rmax'])
+        wbad = np.append(wbad, wbad4*wbad5)
+    sigma[wbad] = sigma[wbad] * 1e10
     
     # fit
     p_opt, p_cov = curve_fit(fitfunc, xdata, ydata,
-                             p0=par0, sigma=sigma, absolute_sigma=False,
+                             p0=par0, sigma=sigma, absolute_sigma=True,
                              check_finite=True, bounds=(par_min, par_max),
                              method=None, jac=None)
-
-    print('       parameters:', p_opt)
+    
+    print('       parameters:')
+    print(p_opt)
+    print('       covariance^1/2:')
+    print(p_cov**0.5)
+    print('')
 
     return p_opt
 
@@ -901,17 +908,20 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 100              # Number of Monte Carlo trials
+    Nmc         = 10              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 5100              # number of MCMC points
-    mcmc_burnin = 100              # number of MCMC burnin points
+    mcmc_nsteps = 500              # number of MCMC points
+    mcmc_burnin = 0              # number of MCMC burnin points
     mcmc_reset  = True             # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
-    basedata    = 'Pedlar1990'     # 'Gitti2002'
+    basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
-    mag_case    = 'Bonafede2010up' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
-    output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'+model_case+'_'+basedata
+    mag_case    = 'Taylor2006' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
+    #mag_case    = 'Bonafede2010low'
+    #mag_case    = 'Bonafede2010up'
+    #mag_case    = 'Walker2017'
+    output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
     
@@ -923,7 +933,7 @@ if __name__ == "__main__":
     #========== Make directory
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
-        print('-----> Working in '+output_dir)
+    print('-----> Working in '+output_dir)
     
     #========== Define the cluster model
     if model_case == 'Hadronic':
