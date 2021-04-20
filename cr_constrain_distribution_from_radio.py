@@ -912,8 +912,9 @@ if __name__ == "__main__":
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
     mcmc_nsteps = 500              # number of MCMC points
+    mcmc_nwalk  = 100              # number of walkers
     mcmc_burnin = 0              # number of MCMC burnin points
-    mcmc_reset  = True             # Reset the MCMC
+    mcmc_reset  = False             # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
@@ -964,7 +965,7 @@ if __name__ == "__main__":
         par_min    = [0.0,     0.0,    2.0,    0.5]
         par_max    = [100,     5.0,    4.0,    1.5]
         par_gprior = ([0.0,    1.0,    2.5,    1.0],
-                      [10., np.inf, np.inf,    0.1])
+                      [20., np.inf, np.inf,    0.1])
     if model_case == 'Leptonic':
         param_name = ['X_{CRe} (x10^{-5})', '\\eta_{CRe}', '\\alpha_{CRe}', 'Norm']
         par0       = [1.0,     1.0,    2.0,    1.0]
@@ -983,7 +984,7 @@ if __name__ == "__main__":
     print('')
     print('-----> Going for the MCMC fit')
     run_function_mcmc(cluster, radio_data, par_opt, par_min, par_max, par_gprior,
-                      mcmc_nsteps=mcmc_nsteps, nwalkers=10,
+                      mcmc_nsteps=mcmc_nsteps, nwalkers=mcmc_nwalk,
                       run_mcmc=run_mcmc, reset_mcmc=mcmc_reset,
                       fit_index=fit_index, model_case=model_case)
     
