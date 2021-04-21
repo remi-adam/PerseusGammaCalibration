@@ -945,23 +945,22 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 10               # Number of Monte Carlo trials
+    Nmc         = 100              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 200              # number of MCMC points
-    mcmc_nwalk  = 50              # number of walkers
+    mcmc_nsteps = 3000             # number of MCMC points
+    mcmc_nwalk  = 2*cpu_count()    # number of walkers
     mcmc_burnin = 0                # number of MCMC burnin points
-    mcmc_reset  = False             # Reset the MCMC
+    mcmc_reset  = True             # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
-    model_case  = 'Leptonic'       # 'Hadronic' or 'Leptonic'
+    model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
     mag_case    = 'Taylor2006' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
     #mag_case    = 'Bonafede2010low'
     #mag_case    = 'Bonafede2010up'
     #mag_case    = 'Walker2017'
-    #output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
+    output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
-    output_dir = '/Users/adam/Desktop/Test'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
     
     #========== Information
@@ -1020,7 +1019,7 @@ if __name__ == "__main__":
         # Get the covariance
         with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
             sampler = pickle.load(f)
-        param_chains = sampler.chain[:, burnin:, :]
+        param_chains = sampler.chain[:, mcmc_burnin:, :]
         chain_list = []
         for i in range(param_chains.shape[2]):
             chain_list.append(param_chains[:,:,i].flatten())
@@ -1032,11 +1031,8 @@ if __name__ == "__main__":
     #========== MCMC fit
     print('')
     print('-----> Going for the MCMC fit')
-    #moves = emcee.moves.StretchMove(a=2.0)
-    #moves = emcee.moves.WalkMove(s=None)
+    moves = emcee.moves.StretchMove(a=2.0)
     #moves = emcee.moves.KDEMove(bw_method='scott')
-    #moves = emcee.moves.GaussianMove(par_cov, mode='vector', factor=None)
-    moves = [(emcee.moves.DEMove(), 0.8), (emcee.moves.DESnookerMove(), 0.2)]
     run_function_mcmc(cluster, radio_data, par_opt, par_min, par_max, par_gprior,
                       mcmc_nsteps=mcmc_nsteps, nwalkers=mcmc_nwalk, moves=moves,
                       run_mcmc=run_mcmc, reset_mcmc=mcmc_reset,
