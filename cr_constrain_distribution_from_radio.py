@@ -76,11 +76,48 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
         sampler = pickle.load(f)
 
+    #----- Plot acceptance
+    # Acceptance
+    sample_acc = (np.roll(sampler.lnprobability,1,axis=1) != sampler.lnprobability)
+    sample_acc = sample_acc[:,1:]
+
+    acc_mean   = np.sum(sample_acc)/float(len(sample_acc.flatten()))
+    acc_sample = np.sum(sample_acc, axis=0)/float(len(sample_acc[:,0]))
+    acc_chain  = np.sum(sample_acc, axis=1)/float(len(sample_acc[0,:]))
+    
+    plt.figure(10)
+    plt.plot(sampler.acceptance_fraction, 'k')
+    plt.plot(acc_chain, 'r', linestyle='--')
+    plt.ylim(0,1)
+    plt.xlim(0,len(sampler.acceptance_fraction)-1)
+    plt.xlabel('Chain number')
+    plt.ylabel('Mean sample acceptance')
+    plt.savefig(cluster.output_dir+'/'+model_case+'_chains_acceptance_chain.pdf')
+    plt.close()
+    
+    plt.figure(11)
+    plt.plot(acc_sample, 'k')
+    plt.ylim(0,1)
+    plt.xlim(0,len(acc_sample)-1)
+    plt.xlabel('Sample number')
+    plt.ylabel('Mean chain acceptance')
+    plt.savefig(cluster.output_dir+'/'+model_case+'_chains_acceptance_sample.pdf')
+    plt.close()
+
     #----- Burn in
     param_chains = sampler.chain[:, burnin:, :]
     lnL_chains = sampler.lnprobability[:, burnin:]
     ndim = param_chains.shape[2]
 
+    #----- Chain covariance
+    chain_list = []
+    for i in range(ndim):
+        chain_list.append(param_chains[:,:,i].flatten())
+    par_cov = np.cov(np.array(chain_list))
+    print('---- Param chain covariance^1/2:')
+    print(par_cov**0.5)
+    print('')
+        
     #----- Get the best fit parameters
     wbest = (lnL_chains == np.amax(lnL_chains))
     param_best = []
@@ -729,7 +766,7 @@ def lnlike(params, cluster, data, par_min, par_max, par_gprior,
 #========================================
 
 def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
-                      mcmc_nsteps=1000, nwalkers=10,
+                      mcmc_nsteps=1000, nwalkers=10, moves=None,
                       run_mcmc=True, reset_mcmc=False,
                       fit_index=False, model_case='Hadronic'):
     '''
@@ -776,7 +813,7 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
             sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
                                             args=[cluster, radio_data, par_min, par_max, par_gprior,
                                                   fit_index, model_case],
-                                            pool=Pool(cpu_count()))
+                                            pool=Pool(cpu_count()), moves=moves)
         else:
             print('    Start from already existing sampler')
             pos = sampler.chain[:,-1,:]
@@ -786,7 +823,7 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
         sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
                                         args=[cluster, radio_data, par_min, par_max, par_gprior,
                                               fit_index, model_case],
-                                        pool=Pool(cpu_count()))
+                                        pool=Pool(cpu_count()), moves=moves)
     
     #----- Run the MCMC
     if run_mcmc:
@@ -898,7 +935,7 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
     print(p_cov**0.5)
     print('')
 
-    return p_opt
+    return p_opt, p_cov
 
         
 #========================================
@@ -908,22 +945,23 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
 
     #========== Parameters
-    Nmc         = 10              # Number of Monte Carlo trials
+    Nmc         = 10               # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 500              # number of MCMC points
-    mcmc_nwalk  = 100              # number of walkers
-    mcmc_burnin = 0              # number of MCMC burnin points
+    mcmc_nsteps = 200              # number of MCMC points
+    mcmc_nwalk  = 50              # number of walkers
+    mcmc_burnin = 0                # number of MCMC burnin points
     mcmc_reset  = False             # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
-    model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
+    model_case  = 'Leptonic'       # 'Hadronic' or 'Leptonic'
     mag_case    = 'Taylor2006' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
     #mag_case    = 'Bonafede2010low'
     #mag_case    = 'Bonafede2010up'
     #mag_case    = 'Walker2017'
-    output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
+    #output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
+    output_dir = '/Users/adam/Desktop/Test'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
     
     #========== Information
@@ -947,7 +985,7 @@ if __name__ == "__main__":
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case=mag_case)
         cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 1.0), 1e-5, 2.0)
         if app_steady: cluster.cre1_loss_model = 'Steady'
-        cluster.Npt_per_decade_integ = 30
+        cluster.Npt_per_decade_integ = 10
     else:
         raise ValueError('Only Hadronic or Leptonic are possible')
     
@@ -975,16 +1013,32 @@ if __name__ == "__main__":
                       [np.inf, np.inf, np.inf, 0.1])
         
     if mcmc_reset and run_mcmc:
-        par_opt = run_curvefit(cluster, radio_data, np.array(par0), par_min, par_max,
-                               fit_index=fit_index, model_case=model_case)
+        par_opt, par_cov = run_curvefit(cluster, radio_data, np.array(par0), par_min, par_max,
+                                        fit_index=fit_index, model_case=model_case)
     else:
         par_opt = np.array(par0) # this is not used in this case, but just to give something
-    
+        # Get the covariance
+        with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
+            sampler = pickle.load(f)
+        param_chains = sampler.chain[:, burnin:, :]
+        chain_list = []
+        for i in range(param_chains.shape[2]):
+            chain_list.append(param_chains[:,:,i].flatten())
+        par_cov = np.cov(np.array(chain_list))
+        print('---- Param chain covariance^1/2:')
+        print(par_cov**0.5)
+        print('')
+
     #========== MCMC fit
     print('')
     print('-----> Going for the MCMC fit')
+    #moves = emcee.moves.StretchMove(a=2.0)
+    #moves = emcee.moves.WalkMove(s=None)
+    #moves = emcee.moves.KDEMove(bw_method='scott')
+    #moves = emcee.moves.GaussianMove(par_cov, mode='vector', factor=None)
+    moves = [(emcee.moves.DEMove(), 0.8), (emcee.moves.DESnookerMove(), 0.2)]
     run_function_mcmc(cluster, radio_data, par_opt, par_min, par_max, par_gprior,
-                      mcmc_nsteps=mcmc_nsteps, nwalkers=mcmc_nwalk,
+                      mcmc_nsteps=mcmc_nsteps, nwalkers=mcmc_nwalk, moves=moves,
                       run_mcmc=run_mcmc, reset_mcmc=mcmc_reset,
                       fit_index=fit_index, model_case=model_case)
     
