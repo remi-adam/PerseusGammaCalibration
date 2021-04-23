@@ -889,7 +889,7 @@ if __name__ == "__main__":
         plt.plot(E.to_value('GeV'), (E**2*dNIC_dEdSdt[j]).to_value('MeV cm-2 s-1'),
                  color=coll2[j], linewidth=3, linestyle='-')
         
-    plt.fill_between([30, 100e3], [0,0], [1e6,1e6], color='red', alpha=0.1, label='CTA energy range')
+    plt.fill_between([30, 100e3], [0,0], [1e6,1e6], color='green', alpha=0.1, label='CTA energy range')
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Energy (GeV)')

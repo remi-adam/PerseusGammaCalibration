@@ -442,7 +442,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.plot(E.to_value('GeV'), (E**2*dNIC_dEdSdt).to_value('MeV cm-2 s-1'),
              color='magenta', linewidth=3, linestyle='-',label='Best-fit model (IC)')
     
-    plt.fill_between([30, 100e3], [0,0], [1e6,1e6], color='red', alpha=0.1, label='CTA energy range')
+    plt.fill_between([30, 100e3], [0,0], [1e6,1e6], color='green', alpha=0.1, label='CTA energy range')
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Energy (GeV)')
@@ -763,106 +763,6 @@ def lnlike(params, cluster, data, par_min, par_max, par_gprior,
 
 
 #========================================
-# Run the MCMC
-#========================================
-
-def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
-                      mcmc_nsteps=1000, nwalkers=10, moves=None,
-                      run_mcmc=True, reset_mcmc=False,
-                      fit_index=False, model_case='Hadronic'):
-    '''
-    Run the MCMC
-
-    Parameters
-    ----------
-    - cluster (minot object): cluster object
-    - par0 (list): guess parameters
-    - par_min/max (list): flat prior limit on parameters
-    - mcmc_nsteps (int): number of MCMC steps
-    - nwalkers (int): number of walkers
-    - run_mcmc (bool): run the MCMC or not
-    - reset_mcmc (bool): reset MCMC or start from existing chains
-    - fit_index (bool): fit the spectral index
-    - model_case (string): case considered, 'Hadronic' or 'Leptonic'
-
-    Output
-    ------
-    - The chains are produced and saved
-    '''
-
-    
-    #---------- Check if a MCMC sampler was already recorded
-    sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.h5')
-    if sampler_exist:
-        print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.h5')
-    '''
-    sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.pkl')
-    if sampler_exist:
-        with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
-            sampler = pickle.load(f)
-        print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.pkl')
-    '''
-    
-    #---------- MCMC parameters
-    ndim = len(par0)
-    if nwalkers < 2*ndim:
-        print('    nwalkers should be at least twice the number of parameters.')
-        print('    nwalkers --> '+str(ndim*2))
-        print('')
-        nwalkers = ndim*2
-            
-    #----- Define the MCMC
-    backend = emcee.backends.HDFBackend(cluster.output_dir+'/'+model_case+'_sampler.h5')
-    pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
-    if sampler_exist:
-        if reset_mcmc:
-            print('    Reset MCMC even though sampler already exists')
-            backend.reset(nwalkers, ndim)
-    else:
-        print('    No pre-existing sampler, start from scratch')
-        print("    --> Initial size: {0}".format(backend.iteration))
-        pos = None
-        
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                    args=[cluster, radio_data, par_min, par_max, par_gprior,
-                                          fit_index, model_case],
-                                    pool=Pool(cpu_count()), moves=moves,
-                                    backend=backend)
-    '''
-    if sampler_exist:
-        if reset_mcmc:
-            print('    Reset MCMC even though sampler already exists')
-            sampler.reset()
-            pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                            args=[cluster, radio_data, par_min, par_max, par_gprior,
-                                                  fit_index, model_case],
-                                            pool=Pool(cpu_count()), moves=moves,
-                                            backend=backend)
-        else:
-            print('    Start from already existing sampler')
-            pos = sampler.chain[:,-1,:]
-    else:
-        print('    No pre-existing sampler, start from scratch')
-        pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                        args=[cluster, radio_data, par_min, par_max, par_gprior,
-                                              fit_index, model_case],
-                                        pool=Pool(cpu_count()), moves=moves,
-                                        backend=backend)
-    '''
-    
-    #----- Run the MCMC
-    if run_mcmc:
-        print('    Runing '+str(mcmc_nsteps)+' MCMC steps')
-        res = sampler.run_mcmc(pos, mcmc_nsteps, progress=True)
-    
-    #----- Save sampler
-    with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'wb') as output:
-        pickle.dump(sampler, output, pickle.HIGHEST_PROTOCOL)
-
-        
-#========================================
 # Standard curve fit first
 #========================================
 
@@ -964,6 +864,112 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 
     return p_opt, p_cov
 
+
+#========================================
+# Run the MCMC
+#========================================
+
+def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
+                      mcmc_nsteps=1000, nwalkers=10, moves=None,
+                      run_mcmc=True, reset_mcmc=False,
+                      fit_index=False, model_case='Hadronic'):
+    '''
+    Run the MCMC
+
+    Parameters
+    ----------
+    - cluster (minot object): cluster object
+    - par0 (list): guess parameters
+    - par_min/max (list): flat prior limit on parameters
+    - mcmc_nsteps (int): number of MCMC steps
+    - nwalkers (int): number of walkers
+    - run_mcmc (bool): run the MCMC or not
+    - reset_mcmc (bool): reset MCMC or start from existing chains
+    - fit_index (bool): fit the spectral index
+    - model_case (string): case considered, 'Hadronic' or 'Leptonic'
+
+    Output
+    ------
+    - The chains are produced and saved
+    '''
+
+    
+    #---------- Check if a MCMC sampler was already recorded
+    sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.h5')
+    if sampler_exist:
+        print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.h5')
+    else:
+        print('    No existing sampler found')
+        
+        '''
+    sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.pkl')
+    if sampler_exist:
+        with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
+            sampler = pickle.load(f)
+        print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.pkl')
+    '''
+    
+    #---------- MCMC parameters
+    ndim = len(par0)
+    if nwalkers < 2*ndim:
+        print('    nwalkers should be at least twice the number of parameters.')
+        print('    nwalkers --> '+str(ndim*2))
+        print('')
+        nwalkers = ndim*2
+            
+    #----- Define the MCMC
+    backend = emcee.backends.HDFBackend(cluster.output_dir+'/'+model_case+'_sampler.h5')
+    pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
+    if sampler_exist:
+        if reset_mcmc:
+            print('    Reset MCMC even though sampler already exists')
+            backend.reset(nwalkers, ndim)
+        else:
+            print('    Use existing MCMC sampler')
+            print("    --> Initial size: {0}".format(backend.iteration))
+            pos = None
+    else:
+        print('    No pre-existing sampler, start from scratch')
+        backend.reset(nwalkers, ndim)
+        
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
+                                    args=[cluster, radio_data, par_min, par_max, par_gprior,
+                                          fit_index, model_case],
+                                    pool=Pool(cpu_count()), moves=moves,
+                                    backend=backend)
+    '''
+    if sampler_exist:
+        if reset_mcmc:
+            print('    Reset MCMC even though sampler already exists')
+            sampler.reset()
+            pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
+            sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
+                                            args=[cluster, radio_data, par_min, par_max, par_gprior,
+                                                  fit_index, model_case],
+                                            pool=Pool(cpu_count()), moves=moves,
+                                            backend=backend)
+        else:
+            print('    Start from already existing sampler')
+            pos = sampler.chain[:,-1,:]
+    else:
+        print('    No pre-existing sampler, start from scratch')
+        pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
+                                        args=[cluster, radio_data, par_min, par_max, par_gprior,
+                                              fit_index, model_case],
+                                        pool=Pool(cpu_count()), moves=moves,
+                                        backend=backend)
+    '''
+    
+    #----- Run the MCMC
+    if run_mcmc:
+        print('    Runing '+str(mcmc_nsteps)+' MCMC steps')
+        res = sampler.run_mcmc(pos, mcmc_nsteps, progress=True)
+    
+        #----- Save sampler
+        with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'wb') as output:
+            pickle.dump(sampler, output, pickle.HIGHEST_PROTOCOL)
+        
         
 #========================================
 # Main function
@@ -972,13 +978,13 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 if __name__ == "__main__":
     
     #========== Parameters
-    Nmc         = 10              # Number of Monte Carlo trials
+    Nmc         = 10               # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 20             # number of MCMC points
+    mcmc_nsteps = 300              # number of MCMC points
     mcmc_nwalk  = 2*cpu_count()    # number of walkers
     mcmc_burnin = 0                # number of MCMC burnin points
-    mcmc_reset  = True             # Reset the MCMC
+    mcmc_reset  = False            # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
@@ -987,7 +993,7 @@ if __name__ == "__main__":
     #mag_case    = 'Walker2017'
     output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
-    output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata+'_Test'
+    output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
 
     #========== Information
     print('========================================')
@@ -1021,7 +1027,7 @@ if __name__ == "__main__":
         cluster = perseus_model_library.set_magnetic_field_model(cluster, case=mag_case)
         cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', 1.0), 1e-5, 2.0)
         if app_steady: cluster.cre1_loss_model = 'Steady'
-        cluster.Npt_per_decade_integ = 10
+        cluster.Npt_per_decade_integ = 30
     else:
         raise ValueError('Only Hadronic or Leptonic are possible')
     
