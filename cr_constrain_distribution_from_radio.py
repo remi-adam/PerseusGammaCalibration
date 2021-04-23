@@ -197,7 +197,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
              color='blue', linewidth=3, label='Best-fit')
     plt.errorbar(radio_data['spectrum']['freq'].to_value('MHz'), radio_data['spectrum']['flux'].to_value('Jy'),
                  radio_data['spectrum']['error'].to_value('Jy'),
-                 marker='o', color='red', linestyle='', label='Data')
+                 marker='o', color='k', linestyle='', label='Data')
     
     plt.xscale('log')
     plt.yscale('log')
@@ -228,7 +228,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.errorbar(radio_data['profile']['radius'].to_value('kpc'),
                  radio_data['profile']['flux'].to_value('Jy arcmin-2'), 
                  yerr=radio_data['profile']['error'].to_value('Jy arcmin-2'),
-                 marker='o', linestyle='', color='red', label='Data')
+                 marker='o', linestyle='', color='k', label='Data')
     
     plt.plot([radio_data['info']['prof_Rmin'].to_value('kpc'),radio_data['info']['prof_Rmin'].to_value('kpc')],
              [0,1e6], linestyle='--', color='grey')
@@ -272,7 +272,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                  linewidth=3, label='Best-fit')
         plt.errorbar(radio_data['index']['radius'].to_value('kpc'), radio_data['index']['idx'],
                      yerr=radio_data['index']['error'],
-                     marker='o', linestyle='', color='red', label='Data')
+                     marker='o', linestyle='', color='k', label='Data')
         
         plt.plot([radio_data['info']['idx_Rmin'].to_value('kpc'),radio_data['info']['idx_Rmin'].to_value('kpc')],
                  [0,1e6], linestyle='--', color='grey')
@@ -380,7 +380,8 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
         if model_case == 'Leptonic':
             cluster = perseus_model_library.set_pure_leptonic_model(cluster, ('density', param_MC[imc,1]),
                                                                     param_MC[imc,0]*1e-5, param_MC[imc,2])
-    
+        if app_steady: cluster.cre1_loss_model = 'Steady'
+
         spec_ic_mci = cluster.get_ic_spectrum(energy, Rmin=None, Rmax=cluster.R500,
                                               type_integral='cylindrical',
                                               Rmin_los=None, NR500_los=5.0)[1]
@@ -418,7 +419,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                      color='blue', alpha=0.05)
     for imc in range(Nmc):
         plt.plot(E.to_value('GeV'), (E**2*spec_ic_mc[imc]).to_value('MeV cm-2 s-1'),
-                 color='grey', alpha=0.05)
+                 color='magenta', alpha=0.05)
         
     # Limits
     plt.plot(E.to_value('GeV'), (E**2*dN_dEdSdt_u).to_value('MeV cm-2 s-1'), color='blue',
@@ -429,17 +430,17 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                      (E**2*dN_dEdSdt_d).to_value('MeV cm-2 s-1'), color='blue', alpha=0.2)
     
     plt.plot(E.to_value('GeV'), (E**2*dNIC_dEdSdt_u).to_value('MeV cm-2 s-1'),
-             color='k', linewidth=2, linestyle='--')
+             color='magenta', linewidth=2, linestyle='--')
     plt.plot(E.to_value('GeV'), (E**2*dNIC_dEdSdt_d).to_value('MeV cm-2 s-1'),
-             color='k', linewidth=2, linestyle='--')
+             color='magenta', linewidth=2, linestyle='--')
     plt.fill_between(E.to_value('GeV'), (E**2*dNIC_dEdSdt_u).to_value('MeV cm-2 s-1'),
-                     (E**2*dNIC_dEdSdt_d).to_value('MeV cm-2 s-1'), color='k', alpha=0.2)
+                     (E**2*dNIC_dEdSdt_d).to_value('MeV cm-2 s-1'), color='magenta', alpha=0.2)
     
     # Best fit
     plt.plot(E.to_value('GeV'), (E**2*dN_dEdSdt).to_value('MeV cm-2 s-1'),
              color='blue', linewidth=3, label='Best-fit model (Hadronic)')
     plt.plot(E.to_value('GeV'), (E**2*dNIC_dEdSdt).to_value('MeV cm-2 s-1'),
-             color='k', linewidth=3, linestyle='-',label='Best-fit model (IC)')
+             color='magenta', linewidth=3, linestyle='-',label='Best-fit model (IC)')
     
     plt.fill_between([30, 100e3], [0,0], [1e6,1e6], color='red', alpha=0.1, label='CTA energy range')
     plt.xscale('log')
@@ -464,7 +465,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                      color='blue', alpha=0.05)
     for imc in range(Nmc):
         plt.plot(r.to_value('kpc'), (prof_ic_mc[imc]).to_value('cm-2 s-1 deg-2'),
-                 color='grey', alpha=0.05)
+                 color='magenta', alpha=0.05)
 
     # Limits
     plt.plot(r.to_value('kpc'), (dN_dSdtdO_u).to_value('cm-2 s-1 deg-2'),
@@ -475,17 +476,17 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                      (dN_dSdtdO_d).to_value('cm-2 s-1 deg-2'), color='blue', alpha=0.2)
     
     plt.plot(r.to_value('kpc'), (dNIC_dSdtdO_u).to_value('cm-2 s-1 deg-2'),
-             color='k', linewidth=2, linestyle='--')
+             color='magenta', linewidth=2, linestyle='--')
     plt.plot(r.to_value('kpc'), (dNIC_dSdtdO_d).to_value('cm-2 s-1 deg-2'),
-             color='k', linewidth=2, linestyle='--')
+             color='magenta', linewidth=2, linestyle='--')
     plt.fill_between(r.to_value('kpc'), (dNIC_dSdtdO_u).to_value('cm-2 s-1 deg-2'),
-                     (dNIC_dSdtdO_d).to_value('cm-2 s-1 deg-2'), color='k', alpha=0.2)
+                     (dNIC_dSdtdO_d).to_value('cm-2 s-1 deg-2'), color='magenta', alpha=0.2)
 
     # Best-fit
     plt.plot(r.to_value('kpc'), (dN_dSdtdO).to_value('cm-2 s-1 deg-2'),
              color='blue', linewidth=3, label='Best-fit model (Hadronic)')
     plt.plot(r.to_value('kpc'), (dNIC_dSdtdO).to_value('cm-2 s-1 deg-2'),
-             color='k', linewidth=3, linestyle='-', label='Best-fit model (IC)')
+             color='magenta', linewidth=3, linestyle='-', label='Best-fit model (IC)')
     
     plt.vlines((0.05*u.deg*cluster.cosmo.kpc_proper_per_arcmin(cluster.redshift)).to_value('kpc'),
                0,1, linestyle=':', color='k', label='CTA PSF (1 TeV)')
@@ -789,13 +790,19 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
     - The chains are produced and saved
     '''
 
+    
     #---------- Check if a MCMC sampler was already recorded
+    sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.h5')
+    if sampler_exist:
+        print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.h5')
+    '''
     sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.pkl')
     if sampler_exist:
         with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
             sampler = pickle.load(f)
         print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.pkl')
-
+    '''
+    
     #---------- MCMC parameters
     ndim = len(par0)
     if nwalkers < 2*ndim:
@@ -805,6 +812,23 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
         nwalkers = ndim*2
             
     #----- Define the MCMC
+    backend = emcee.backends.HDFBackend(cluster.output_dir+'/'+model_case+'_sampler.h5')
+    pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
+    if sampler_exist:
+        if reset_mcmc:
+            print('    Reset MCMC even though sampler already exists')
+            backend.reset(nwalkers, ndim)
+    else:
+        print('    No pre-existing sampler, start from scratch')
+        print("    --> Initial size: {0}".format(backend.iteration))
+        pos = None
+        
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
+                                    args=[cluster, radio_data, par_min, par_max, par_gprior,
+                                          fit_index, model_case],
+                                    pool=Pool(cpu_count()), moves=moves,
+                                    backend=backend)
+    '''
     if sampler_exist:
         if reset_mcmc:
             print('    Reset MCMC even though sampler already exists')
@@ -813,7 +837,8 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
             sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
                                             args=[cluster, radio_data, par_min, par_max, par_gprior,
                                                   fit_index, model_case],
-                                            pool=Pool(cpu_count()), moves=moves)
+                                            pool=Pool(cpu_count()), moves=moves,
+                                            backend=backend)
         else:
             print('    Start from already existing sampler')
             pos = sampler.chain[:,-1,:]
@@ -823,7 +848,9 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
         sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
                                         args=[cluster, radio_data, par_min, par_max, par_gprior,
                                               fit_index, model_case],
-                                        pool=Pool(cpu_count()), moves=moves)
+                                        pool=Pool(cpu_count()), moves=moves,
+                                        backend=backend)
+    '''
     
     #----- Run the MCMC
     if run_mcmc:
@@ -943,12 +970,12 @@ def run_curvefit(cluster, radio_data, par0, par_min, par_max,
 #========================================
 
 if __name__ == "__main__":
-
+    
     #========== Parameters
-    Nmc         = 100              # Number of Monte Carlo trials
+    Nmc         = 10              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 3000             # number of MCMC points
+    mcmc_nsteps = 20             # number of MCMC points
     mcmc_nwalk  = 2*cpu_count()    # number of walkers
     mcmc_burnin = 0                # number of MCMC burnin points
     mcmc_reset  = True             # Reset the MCMC
@@ -956,18 +983,28 @@ if __name__ == "__main__":
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
     mag_case    = 'Taylor2006' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
-    #mag_case    = 'Bonafede2010low'
     #mag_case    = 'Bonafede2010up'
     #mag_case    = 'Walker2017'
     output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
-    output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
-    
+    output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata+'_Test'
+
     #========== Information
     print('========================================')
     print(' Starting the CR calibration of Perseus ')
     print('========================================')
-    
+    print('   Number of CPU available:      ', cpu_count())
+    print('   Number of MC planed:          ', Nmc)
+    print('   Burnin:                       ', mcmc_burnin)
+    print('   Reset MCMC?:                  ', mcmc_reset)
+    print('   Run MCMC?:                    ', run_mcmc)
+    print('   Number of walkers:            ', mcmc_nwalk)
+    print('   Number of steps:              ', mcmc_nsteps)
+    print('   Fitting for spectral index?:  ', fit_index)
+    print('   Applying SS loss (leptonic)?: ', app_steady)
+    print('----------------------------------------')
+    print('')
+
     #========== Make directory
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
@@ -1000,7 +1037,7 @@ if __name__ == "__main__":
         param_name = ['X_{CRp} (x10^{-2})', '\\eta_{CRp}', '\\alpha_{CRp}', 'Norm']
         par0       = [1.0,     1.0,    2.5,    1.0]
         par_min    = [0.0,     0.0,    2.0,    0.5]
-        par_max    = [100,     5.0,    4.0,    1.5]
+        par_max    = [20,      5.0,    4.0,    1.5]
         par_gprior = ([0.0,    1.0,    2.5,    1.0],
                       [20., np.inf, np.inf,    0.1])
     if model_case == 'Leptonic':
