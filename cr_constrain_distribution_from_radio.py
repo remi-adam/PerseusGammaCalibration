@@ -978,19 +978,19 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
 if __name__ == "__main__":
     
     #========== Parameters
-    Nmc         = 10               # Number of Monte Carlo trials
+    Nmc         = 300              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_nsteps = 300              # number of MCMC points
+    mcmc_nsteps = 5000             # number of MCMC points
     mcmc_nwalk  = 2*cpu_count()    # number of walkers
-    mcmc_burnin = 0                # number of MCMC burnin points
+    mcmc_burnin = 2000             # number of MCMC burnin points
     mcmc_reset  = False            # Reset the MCMC
     run_mcmc    = True             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
-    mag_case    = 'Taylor2006' # Taylor2006, Walker2017, Bonafede2010best, Bonafede2010low, Bonafede2010up, Bonafede2010std
+    #mag_case    = 'Taylor2006'
     #mag_case    = 'Bonafede2010up'
-    #mag_case    = 'Walker2017'
+    mag_case    = 'Walker2017'
     output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata

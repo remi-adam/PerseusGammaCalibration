@@ -464,10 +464,10 @@ if __name__ == "__main__":
 
     #========== Parameters
     conf        = 68.0
-    Nmc         = 100              # Number of Monte Carlo trials
+    Nmc         = 300              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_burnin = 1500                # number of MCMC burnin points
+    mcmc_burnin = 2000                # number of MCMC burnin points
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
     mag_case    = ['Taylor2006','Bonafede2010up','Walker2017']
