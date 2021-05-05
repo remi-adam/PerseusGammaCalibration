@@ -900,14 +900,6 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
         print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.h5')
     else:
         print('    No existing sampler found')
-        
-        '''
-    sampler_exist = os.path.exists(cluster.output_dir+'/'+model_case+'_sampler.pkl')
-    if sampler_exist:
-        with open(cluster.output_dir+'/'+model_case+'_sampler.pkl', 'rb') as f:
-            sampler = pickle.load(f)
-        print('    Existing sampler: '+cluster.output_dir+'/'+model_case+'_sampler.pkl')
-    '''
     
     #---------- MCMC parameters
     ndim = len(par0)
@@ -937,30 +929,7 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
                                           fit_index, model_case],
                                     pool=Pool(cpu_count()), moves=moves,
                                     backend=backend)
-    '''
-    if sampler_exist:
-        if reset_mcmc:
-            print('    Reset MCMC even though sampler already exists')
-            sampler.reset()
-            pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                            args=[cluster, radio_data, par_min, par_max, par_gprior,
-                                                  fit_index, model_case],
-                                            pool=Pool(cpu_count()), moves=moves,
-                                            backend=backend)
-        else:
-            print('    Start from already existing sampler')
-            pos = sampler.chain[:,-1,:]
-    else:
-        print('    No pre-existing sampler, start from scratch')
-        pos = mcmc_common.chains_starting_point(par0, 0.1, par_min, par_max, nwalkers)
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnlike,
-                                        args=[cluster, radio_data, par_min, par_max, par_gprior,
-                                              fit_index, model_case],
-                                        pool=Pool(cpu_count()), moves=moves,
-                                        backend=backend)
-    '''
-    
+
     #----- Run the MCMC
     if run_mcmc:
         print('    Runing '+str(mcmc_nsteps)+' MCMC steps')
