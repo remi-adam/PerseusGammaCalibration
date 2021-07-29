@@ -103,11 +103,13 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.ylabel('Mean chain acceptance')
     plt.savefig(cluster.output_dir+'/'+model_case+'_chains_acceptance_sample.pdf')
     plt.close()
-
+    print('  --> Acceptence plot done')
+    
     #----- Burn in
     param_chains = sampler.chain[:, burnin:, :]
     lnL_chains = sampler.lnprobability[:, burnin:]
     ndim = param_chains.shape[2]
+    print('  --> Burn-in done')
 
     #----- Chain covariance
     chain_list = []
@@ -117,27 +119,31 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     print('---- Param chain covariance^1/2:')
     print(par_cov**0.5)
     print('')
+    print('  --> Chain covariance done')
         
     #----- Get the best fit parameters
     wbest = (lnL_chains == np.amax(lnL_chains))
     param_best = []
     for i in range(ndim):
         param_best.append(((param_chains[:,:,i])[wbest])[0])
-        
+    print('  --> Best-fit parameters done')
+
     #----- MC parameters
     param_flat = param_chains.reshape(param_chains.shape[0]*param_chains.shape[1],param_chains.shape[2])
     Nsample = len(param_flat[:,0])-1
     param_MC = np.zeros((Nmc, ndim))
     for i in range(Nmc):
         param_MC[i,:] = param_flat[np.random.randint(0, high=Nsample), :] # randomly taken from chains
+    print('  --> MC parameters done')
         
     #========== Statistics results
-    #----- Parameters
+    #----- Chain statistics
     chainfname = cluster.output_dir+'/'+model_case+'_chainstat.txt'
     par_best, par_percentile = mcmc_common.chains_statistics(param_chains, lnL_chains,
                                                              parname=param_name, conf=conf, show=True,
                                                              outfile=chainfname)
-    
+    print('  --> Chain statistics done')
+        
     #----- Parameter space
     try:
         mcmc_common.chains_plots(param_chains, param_name, cluster.output_dir+'/'+model_case+'_chains',
@@ -145,7 +151,8 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                                  par_min=par_min, par_max=par_max)
     except:
         print('Error in chains_plots --> skip it')
-        
+    print('  --> Chain plots done')
+
     #========== Data versus model
     # Best-fit
     if model_case == 'Hadronic':
@@ -176,7 +183,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     
     idx_u = np.percentile(np.array(idx_mc), 100-(100-conf)/2.0, axis=0)
     idx_d = np.percentile(np.array(idx_mc), (100-conf)/2.0, axis=0)
-        
+    
     #----- Spectrum
     fig = plt.figure(0, figsize=(8, 6))
     # MC
@@ -290,6 +297,8 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
         plt.ylim(0.5,2.5)
         plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_index.pdf')
         plt.close()
+
+    print('  --> Radio plots done')
     
     #========== Implication for gamma rays
     energy = np.logspace(-2,6,100)*u.GeV
@@ -311,10 +320,10 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                                               Rmin_los=None, NR500_los=5.0)
     
     r, dN_dSdtdO = cluster.get_gamma_profile(radius, 
-                                             Emin=50*u.GeV, Emax=100*u.TeV, 
+                                             Emin=150*u.GeV, Emax=50*u.TeV, 
                                              Energy_density=False, Rmin_los=None, NR500_los=5.0)
 
-    fluxH = cluster.get_gamma_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+    fluxH = cluster.get_gamma_flux(Emin=150*u.GeV, Emax=None, Energy_density=False,
                                    Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
     
     # Inverse Compton
@@ -324,10 +333,10 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                                              Rmin_los=None, NR500_los=5.0)
     
     r, dNIC_dSdtdO = cluster.get_ic_profile(radius, 
-                                            Emin=50*u.GeV, Emax=100*u.TeV, 
+                                            Emin=150*u.GeV, Emax=50*u.TeV, 
                                             Energy_density=False, Rmin_los=None, NR500_los=5.0)
 
-    fluxIC = cluster.get_ic_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+    fluxIC = cluster.get_ic_flux(Emin=150*u.GeV, Emax=None, Energy_density=False,
                                  Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
 
     #---------- Monte Carlo sampling: hadronic
@@ -348,10 +357,10 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                                                 type_integral='cylindrical',
                                                 Rmin_los=None, NR500_los=5.0)[1]
     
-        prof_g_mci = cluster.get_gamma_profile(radius, Emin=50*u.GeV, Emax=100*u.TeV, 
+        prof_g_mci = cluster.get_gamma_profile(radius, Emin=150*u.GeV, Emax=50*u.TeV, 
                                                Energy_density=False, Rmin_los=None, NR500_los=5.0)[1]
 
-        flux_g_mci = cluster.get_gamma_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+        flux_g_mci = cluster.get_gamma_flux(Emin=150*u.GeV, Emax=None, Energy_density=False,
                                             Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
     
         prof_g_mc.append(prof_g_mci)
@@ -386,10 +395,10 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                                               type_integral='cylindrical',
                                               Rmin_los=None, NR500_los=5.0)[1]
     
-        prof_ic_mci = cluster.get_ic_profile(radius, Emin=50*u.GeV, Emax=100*u.TeV, 
+        prof_ic_mci = cluster.get_ic_profile(radius, Emin=150*u.GeV, Emax=50*u.TeV, 
                                              Energy_density=False, Rmin_los=None, NR500_los=5.0)[1]
 
-        flux_ic_mci = cluster.get_ic_flux(Emin=50*u.GeV, Emax=None, Energy_density=False,
+        flux_ic_mci = cluster.get_ic_flux(Emin=150*u.GeV, Emax=None, Energy_density=False,
                                           Rmax=cluster.R500, type_integral='cylindrical').to_value('s-1 cm-2')
 
         prof_ic_mc.append(prof_ic_mci)
@@ -496,13 +505,14 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.xlabel('Radius (kpc)')
     plt.ylabel(r'$\frac{dN}{dSdtd\Omega}$ (cm$^{-2}$ s$^{-1}$ deg$^{-2}$)')
     plt.xlim(10,5e3)
-    plt.ylim(1e-15,1e-8)
+    plt.ylim(1e-16,1e-9)
     plt.legend(fontsize=14)
     plt.savefig(cluster.output_dir+'/'+model_case+'_Gamma_profile.pdf')
     plt.close()
 
     #----- Flux
     file = open(cluster.output_dir+'/'+model_case+'_Gamma_flux.txt','w')
+    file.write('Energy E_gamma > 150 GeV \n')
     file.write('Hadronic        - Best  '+str(fluxH)+' cm-2 s-1 \n')
     file.write('                  Upper '+str(fluxH_u)+' cm-2 s-1 \n')
     file.write('                  Lower '+str(fluxH_d)+' cm-2 s-1 \n')
@@ -528,7 +538,8 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
                         figsize=(10,10), fontsize=12,
                         cols=[('blue','grey', 'orange')])
     plt.close("all")
-    
+    print('  --> Gamma plots done')
+
 
 #========================================
 # Leptonic model
@@ -947,19 +958,19 @@ def run_function_mcmc(cluster, radio_data, par0, par_min, par_max, par_gprior,
 if __name__ == "__main__":
     
     #========== Parameters
-    Nmc         = 300              # Number of Monte Carlo trials
+    Nmc         = 100              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
     mcmc_nsteps = 89             # number of MCMC points
     mcmc_nwalk  = 2*cpu_count()    # number of walkers
     mcmc_burnin = 2000             # number of MCMC burnin points
     mcmc_reset  = False            # Reset the MCMC
-    run_mcmc    = True             # Run the MCMC
+    run_mcmc    = False             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
     #mag_case    = 'Taylor2006'
-    mag_case    = 'Bonafede2010up'
-    #mag_case    = 'Walker2017'
+    #mag_case    = 'Bonafede2010up'
+    mag_case    = 'Walker2017'
     output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata

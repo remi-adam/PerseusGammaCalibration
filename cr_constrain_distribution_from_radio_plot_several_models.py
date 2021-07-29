@@ -464,10 +464,10 @@ if __name__ == "__main__":
 
     #========== Parameters
     conf        = 68.0
-    Nmc         = 300              # Number of Monte Carlo trials
+    Nmc         = 100              # Number of Monte Carlo trials
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
-    mcmc_burnin = 2000                # number of MCMC burnin points
+    mcmc_burnin = 3000             # number of MCMC burnin points
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
     mag_case    = ['Taylor2006','Bonafede2010up','Walker2017']
@@ -546,8 +546,9 @@ if __name__ == "__main__":
     plotting.seaborn_corner(dfs,
                             output_fig=output_dir0+'/'+model_case+'_2D_likelihood.pdf', 
                             ci2d=[0.95, 0.68], ci1d=0.68,
+                            smoothing1d=2,smoothing2d=2,
                             truth=None, truth_style='star', labels=mag_case,
-                            gridsize=50, linewidth=0.75, alpha=(0.1, 0.3, 1.0), n_levels=30,
+                            gridsize=30, linewidth=0.75, alpha=(0.1, 0.3, 1.0), n_levels=30,
                             zoom=0.15, add_grid=True,
                             figsize=(12,10), fontsize=12,
                             cols = [('orange',None,'orange','Oranges'),
