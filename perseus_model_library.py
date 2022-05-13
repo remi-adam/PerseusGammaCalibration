@@ -57,8 +57,8 @@ def default_model(directory=None):
                             cosmology=cosmo,
                             silent=True,
                             output_dir=outdir)
-    cluster.R_truncation = NR500_trunc*cluster.R500
     cluster.theta500     = theta500
+    cluster.R_truncation = NR500_trunc*cluster.R500
 
     cluster.helium_mass_fraction = Yhe
     cluster.abundance            = Abundance
