@@ -173,7 +173,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
         prof_mc.append(prof_mci)
         spec_mc.append(spec_mci)
         idx_mc.append(idx_mci)
-        
+
     # Limits
     prof_u = np.percentile(np.array(prof_mc), 100-(100-conf)/2.0, axis=0)*prof_mc[0].unit
     prof_d = np.percentile(np.array(prof_mc), (100-conf)/2.0, axis=0)*prof_mc[0].unit
@@ -183,7 +183,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     
     idx_u = np.percentile(np.array(idx_mc), 100-(100-conf)/2.0, axis=0)
     idx_d = np.percentile(np.array(idx_mc), (100-conf)/2.0, axis=0)
-    
+
     #----- Spectrum
     fig = plt.figure(0, figsize=(8, 6))
     # MC
@@ -213,7 +213,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.legend()
     plt.savefig(cluster.output_dir+'/'+model_case+'_Radio_spectrum.pdf')
     plt.close()
-    
+
     #----- Profile
     fig = plt.figure(0, figsize=(8, 6))
     # MC
@@ -416,6 +416,26 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     fluxIC_d = np.percentile(np.array(flux_ic_mc), (100-conf)/2.0)
     
     #========== Figure
+    base_cluster = perseus_model_library.default_model(directory=cluster.output_dir)
+    base_cluster = perseus_model_library.set_pure_hadronic_model(base_cluster, ('density', 1.0), 1e-2, 2.3)
+    
+    bid, base_dN_dEdSdt = base_cluster.get_gamma_spectrum(energy, 
+                                                          Rmin=None, Rmax=base_cluster.R500,
+                                                          type_integral='cylindrical',
+                                                          Rmin_los=None, NR500_los=5.0)
+    bid, base_dN_dSdtdO = base_cluster.get_gamma_profile(radius, 
+                                                         Emin=150*u.GeV, Emax=50*u.TeV, 
+                                                         Energy_density=False, Rmin_los=None, NR500_los=5.0)
+    
+    bid, base_dNIC_dEdSdt = base_cluster.get_ic_spectrum(energy, 
+                                                         Rmin=None, Rmax=base_cluster.R500,
+                                                         type_integral='cylindrical',
+                                                         Rmin_los=None, NR500_los=5.0)
+    
+    bid, base_dNIC_dSdtdO = base_cluster.get_ic_profile(radius, 
+                                                        Emin=150*u.GeV, Emax=50*u.TeV, 
+                                                        Energy_density=False, Rmin_los=None, NR500_los=5.0)
+    
     #----- Spectrum
     fig = plt.figure(0, figsize=(8, 6))
     # MC
@@ -450,7 +470,13 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
              color='blue', linewidth=3, label='Best-fit model (Hadronic)')
     plt.plot(E.to_value('GeV'), (E**2*dNIC_dEdSdt).to_value('MeV cm-2 s-1'),
              color='magenta', linewidth=3, linestyle='-',label='Best-fit model (IC)')
-    
+
+    # Base
+    plt.plot(E.to_value('GeV'), (E**2*base_dN_dEdSdt).to_value('MeV cm-2 s-1'),
+             color='green', linewidth=3, label='Base model (Hadronic)')
+    plt.plot(E.to_value('GeV'), (E**2*base_dNIC_dEdSdt).to_value('MeV cm-2 s-1'),
+             color='chartreuse', linewidth=3, linestyle='-',label='Base model (IC)')
+
     plt.fill_between([30, 100e3], [0,0], [1e6,1e6], color='green', alpha=0.1, label='CTA energy range')
     plt.xscale('log')
     plt.yscale('log')
@@ -458,7 +484,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.ylabel(r'$\frac{E^2 dN}{dEdSdt}$ (MeV cm$^{-2}$ s$^{-1}$)')
     plt.xlim(1e-2, 2e5)
     plt.ylim(1e-10, 5e-6)
-    plt.legend(fontsize=14)
+    plt.legend(fontsize=12)
     plt.savefig(cluster.output_dir+'/'+model_case+'_Gamma_spectrum.pdf')
     plt.close()
 
@@ -496,6 +522,12 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
              color='blue', linewidth=3, label='Best-fit model (Hadronic)')
     plt.plot(r.to_value('kpc'), (dNIC_dSdtdO).to_value('cm-2 s-1 deg-2'),
              color='magenta', linewidth=3, linestyle='-', label='Best-fit model (IC)')
+
+    # Base
+    plt.plot(r.to_value('kpc'), (base_dN_dSdtdO).to_value('cm-2 s-1 deg-2'),
+             color='green', linewidth=3, label='Base model (Hadronic)')
+    plt.plot(r.to_value('kpc'), (base_dNIC_dSdtdO).to_value('cm-2 s-1 deg-2'),
+             color='chartreuse', linewidth=3, linestyle='-', label='Base model (IC)')
     
     plt.vlines((0.05*u.deg*cluster.cosmo.kpc_proper_per_arcmin(cluster.redshift)).to_value('kpc'),
                0,1, linestyle=':', color='k', label='CTA PSF (1 TeV)')
@@ -506,7 +538,7 @@ def post_analysis(cluster, radio_data, param_name, par_min, par_max, burnin,
     plt.ylabel(r'$\frac{dN}{dSdtd\Omega}$ (cm$^{-2}$ s$^{-1}$ deg$^{-2}$)')
     plt.xlim(10,5e3)
     plt.ylim(1e-16,1e-9)
-    plt.legend(fontsize=14)
+    plt.legend(fontsize=12)
     plt.savefig(cluster.output_dir+'/'+model_case+'_Gamma_profile.pdf')
     plt.close()
 
@@ -962,15 +994,15 @@ if __name__ == "__main__":
     fit_index   = False            # Fit the spectral index profile
     app_steady  = True             # Application of steady state losses
     mcmc_nsteps = 89             # number of MCMC points
-    mcmc_nwalk  = 2*cpu_count()    # number of walkers
+    mcmc_nwalk  = 96#2*cpu_count()    # number of walkers
     mcmc_burnin = 2000             # number of MCMC burnin points
     mcmc_reset  = False            # Reset the MCMC
     run_mcmc    = False             # Run the MCMC
     basedata    = 'Pedlar1990'     # 'Gitti2002', 'Pedlar1990'
     model_case  = 'Hadronic'       # 'Hadronic' or 'Leptonic'
-    #mag_case    = 'Taylor2006'
+    mag_case    = 'Taylor2006'
     #mag_case    = 'Bonafede2010up'
-    mag_case    = 'Walker2017'
+    #mag_case    = 'Walker2017'
     output_dir = '/sps/cta/llr/radam/PerseusGammaCalib'
     #output_dir  = '/Users/adam/Project/CTA/Phys/Outputs/Perseus_KSP_calibration/Calib'
     output_dir = output_dir+'_'+model_case+'_'+mag_case+'_'+basedata
@@ -1055,7 +1087,6 @@ if __name__ == "__main__":
     print('')
     print('-----> Going for the MCMC fit')
     moves = emcee.moves.StretchMove(a=2.0)
-    #moves = emcee.moves.KDEMove(bw_method='scott')
     run_function_mcmc(cluster, radio_data, par_opt, par_min, par_max, par_gprior,
                       mcmc_nsteps=mcmc_nsteps, nwalkers=mcmc_nwalk, moves=moves,
                       run_mcmc=run_mcmc, reset_mcmc=mcmc_reset,
